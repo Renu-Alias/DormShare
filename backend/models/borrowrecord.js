@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const borrowRecordSchema = new mongoose.Schema(
 {
     item:{
@@ -46,3 +48,6 @@ const borrowRecordSchema = new mongoose.Schema(
 {
     timestamps:true
 });
+
+const BorrowRecord = mongoose.model("BorrowRecord", borrowRecordSchema);
+export default BorrowRecord;

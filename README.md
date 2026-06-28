@@ -34,19 +34,30 @@ At the end of every semester, students throw away or give away perfectly good es
 ```text
 DormShare/
 ├── backend/
-│   ├── config/         # Database and SMTP configurations
-│   ├── controllers/    # Request handlers (auth, items, leases)
-│   ├── middleware/     # Auth and validation middleware
-│   ├── models/         # Mongoose Schemas (User, Item, Lease)
-│   ├── routes/         # API endpoints
-│   └── server.js       # Entry point & cron job initialization
-└── frontend/
-    ├── src/
-    │   ├── components/ # Reusable UI components (Navbar, ItemCard)
-    │   ├── pages/      # Home, Dashboard, Login, Register, CreateListing
-    │   ├── App.js      # Routes and application entry
-    │   └── index.js
-    └── ...
+│   ├── config/
+│   │   ├── db.js           # MongoDB connection
+│   │   └── smtp.js         # Nodemailer transporter
+│   ├── controllers/
+│   │   ├── authController.js    # Register, login, profile, password reset
+│   │   ├── itemController.js    # Listing CRUD, search, filter, toggle
+│   │   └── leaseController.js   # Borrow, return, extension, countdown, overdue
+│   ├── middleware/
+│   │   ├── auth.js              # JWT protect middleware
+│   │   └── validation.js        # Input sanitizers for auth, items, leases
+│   ├── models/
+│   │   ├── user.js              # User schema (college email, hostel, etc.)
+│   │   ├── item.js              # Item listing schema
+│   │   └── borrowrecord.js      # Lease/borrow record schema
+│   ├── routes/
+│   │   ├── authRoutes.js        # /api/auth/*
+│   │   ├── itemRouts.js         # /api/items/*
+│   │   └── leaseRoutes.js       # /api/leases/*
+│   ├── uploads/                 # Local image storage (gitignored)
+│   ├── server.js                # Entry point, routes, cron, error handlers
+│   └── package.json
+├── .env.example
+├── .gitignore
+└── README.md
 ```
 
 ---

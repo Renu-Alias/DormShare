@@ -55,10 +55,15 @@ const itemSchema = new mongoose.Schema(
     },
 
     status: {
-      type: String,
-      enum: ["Available", "Reserved", "Borrowed"],
-      default: "Available",
+        type: String,
+        enum: ["Available", "Reserved", "Borrowed"],
+        default: "Available",
     },
+
+    isAvailable: {
+        type: Boolean,
+        default: true
+    }
   },
   {
     timestamps: true,

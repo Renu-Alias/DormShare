@@ -34,7 +34,7 @@ const itemSchema = new mongoose.Schema(
     transactionType: {
       type: String,
       required: true,
-      enum: ["Borrow", "Lease", "Sale"],
+      enum: ["Free to Borrow", "Available for Lease"],
     },
 
     price: {

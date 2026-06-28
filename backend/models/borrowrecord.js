@@ -43,7 +43,11 @@ const borrowRecordSchema = new mongoose.Schema(
     extensionRequested:{
         type:Boolean,
         default:false
-    }
+    },
+    extensionDays: {
+    type: Number,
+    default: 0
+}
 },
 {
     timestamps:true

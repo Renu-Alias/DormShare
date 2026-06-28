@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+import helmet from "helmet";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -8,14 +10,26 @@ import cron from "node-cron";
 import transporter from "./config/smtp.js";
 import BorrowRecord from "./models/borrowrecord.js";
 import { protect } from "./middleware/auth.js";
+import rateLimit from "express-rate-limit";
+import mongoSanitize from "express-mongo-sanitize";
 
 dotenv.config();
 
 connectDB();
 
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: "Too many requests from this IP. Please try again later."
+});
+
 const app = express();
 
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
+app.use(mongoSanitize());
+app.use(limiter);
 
 app.get("/", (req, res) => {
     res.send("DormShare API Running");
@@ -51,7 +65,7 @@ cron.schedule("0 8 * * *", async () => {
         threeDaysFromNow.setDate(now.getDate() + 3);
 
         const upcomingLeases = await BorrowRecord.find({
-            status: { $in: ["Active", "Borrowed"] },
+            status: { $in: ["Borrowed"] },
             expectedReturnDate: { $lte: threeDaysFromNow, $gte: now }
         }).populate("borrower", "collegeEmail name").populate("item", "title");
 

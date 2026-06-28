@@ -132,7 +132,3 @@ The app will open at `http://localhost:3000`.
 
 ---
 
-## 📝 Team Notes
-- Share `.env` values via private channel only (GitHub Issues / Discord / WhatsApp), never commit them.
-- For SMTP/Gmail: enable **2-Step Verification** and use an **App Password** as `SMTP_PASS`.
-- For MongoDB: use a shared Atlas cluster M0 (free tier) and share the connection string privately.

@@ -46,3 +46,82 @@ DormShare/
     │   ├── pages/      # Home, Dashboard, Login, Register, CreateListing
     │   ├── App.js      # Routes and application entry
     │   └── index.js
+    └── ...
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js >= 16
+- MongoDB (local or Atlas)
+- Gmail account (for SMTP) or any email provider
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/<your-org>/DormShare.git
+cd DormShare
+```
+
+### 2. Install backend dependencies
+```bash
+cd backend
+npm install
+```
+
+### 3. Configure environment variables
+Copy the example env file and fill in your values:
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your actual values:
+| Variable | Description |
+|----------|-------------|
+| `PORT` | Backend port (default: `5000`) |
+| `NODE_ENV` | `development` or `production` |
+| `MONGO_URI` | MongoDB connection string (Atlas or local) |
+| `JWT_SECRET` | Long random string for signing JWTs |
+| `JWT_EXPIRE` | Token expiry (e.g. `7d`) |
+| `ALLOWED_EMAIL_DOMAINS` | Comma-separated college domains (e.g. `@mits.ac.in`) |
+| `FROM_EMAIL` | Sender email for transactional emails |
+| `SMTP_HOST` | SMTP host (e.g. `smtp.gmail.com`) |
+| `SMTP_PORT` | SMTP port (e.g. `587`) |
+| `SMTP_USER` | SMTP username (usually same as `FROM_EMAIL`) |
+| `SMTP_PASS` | SMTP password (for Gmail: use an **App Password**) |
+
+> **Note:** `.env` is `.gitignore`’d — never commit real secrets.
+
+### 4. Create uploads folder
+The backend stores uploaded images in `backend/uploads/`. Create it manually if it doesn't exist:
+```bash
+mkdir backend/uploads
+```
+
+### 5. Run the backend
+```bash
+# Development (with nodemon)
+npm run dev
+
+# Production
+npm start
+```
+
+The API will be available at `http://localhost:5000`.
+
+### 6. Run the frontend
+```bash
+cd ../frontend
+npm install
+npm start
+```
+
+The app will open at `http://localhost:3000`.
+
+---
+
+## 📝 Team Notes
+- Share `.env` values via private channel only (GitHub Issues / Discord / WhatsApp), never commit them.
+- For SMTP/Gmail: enable **2-Step Verification** and use an **App Password** as `SMTP_PASS`.
+- For MongoDB: use a shared Atlas cluster M0 (free tier) and share the connection string privately.

@@ -89,11 +89,66 @@ function Dashboard() {
     return `text-xs px-2 py-0.5 rounded-full font-medium ${styles[status] || "bg-surface text-muted"}`;
   };
 
+  const totallyEmpty = !loading && myItems.length === 0 && leases.borrowed.length === 0 && leases.lent.length === 0;
+
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="max-w-6xl mx-auto px-8 py-12 text-sm text-muted">Loading...</div>
+        <div className="max-w-6xl mx-auto px-8 py-12">
+          <div className="text-center mb-12">
+            <div className="w-48 h-6 bg-stone-100 rounded-md mx-auto animate-pulse" />
+            <div className="w-64 h-4 bg-stone-100 rounded-md mx-auto mt-3 animate-pulse" />
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="rounded-xl border border-border bg-white p-6 space-y-4">
+              <div className="w-24 h-4 bg-stone-100 rounded-md animate-pulse" />
+              <div className="h-12 bg-stone-100 rounded-lg animate-pulse" />
+              <div className="h-12 bg-stone-100 rounded-lg animate-pulse" />
+            </div>
+            <div className="rounded-xl border border-border bg-white p-6 space-y-4">
+              <div className="w-28 h-4 bg-stone-100 rounded-md animate-pulse" />
+              <div className="h-12 bg-stone-100 rounded-lg animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (totallyEmpty) {
+    return (
+      <>
+        <Navbar />
+        <div className="max-w-6xl mx-auto px-8 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-2xl font-semibold tracking-tight text-text">Dashboard</h1>
+            <p className="mt-2 text-sm text-secondary">Manage your listings and borrowed items.</p>
+          </div>
+          <div className="text-center py-20 border border-dashed border-border rounded-xl bg-white">
+            <svg className="w-12 h-12 text-muted mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p className="mt-5 text-sm text-secondary max-w-xs mx-auto">
+              Your dashboard is empty. Start by browsing the marketplace or creating your first listing.
+            </p>
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <Link
+                to="/marketplace"
+                className="text-sm px-5 py-2 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
+              >
+                Browse Marketplace
+              </Link>
+              <Link
+                to="/create"
+                className="text-sm px-5 py-2 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
+              >
+                Create Listing
+              </Link>
+            </div>
+          </div>
+        </div>
+        <Footer />
       </>
     );
   }

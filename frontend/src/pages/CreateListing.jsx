@@ -93,6 +93,11 @@ function CreateListing() {
                 <option>Electronics</option>
                 <option>Bedding</option>
                 <option>Furniture</option>
+                <option>Kitchen</option>
+                <option>Clothing</option>
+                <option>Sports & Fitness</option>
+                <option>Stationery</option>
+                <option>Appliances</option>
                 <option>Others</option>
               </select>
             </div>

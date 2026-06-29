@@ -25,6 +25,36 @@ const mockItems = [
     hostelBlock: "D Block", images: [], isAvailable: true,
     owner: { _id: "u4", name: "Dave", collegeEmail: "dave@college.edu", hostelBlock: "D Block" },
   },
+  {
+    _id: "5", title: "Rice Cooker", category: "Kitchen", description: "Compact 2-cup rice cooker",
+    condition: "Gently Used", transactionType: "Free to Borrow", price: 0,
+    hostelBlock: "A Block", images: [], isAvailable: true,
+    owner: { _id: "u1", name: "Alice", collegeEmail: "alice@college.edu", hostelBlock: "A Block" },
+  },
+  {
+    _id: "6", title: "Winter Jacket", category: "Clothing", description: "Warm down jacket, size L",
+    condition: "Like New", transactionType: "Available for Lease", price: 30,
+    hostelBlock: "B Block", images: [], isAvailable: true,
+    owner: { _id: "u2", name: "Bob", collegeEmail: "bob@college.edu", hostelBlock: "B Block" },
+  },
+  {
+    _id: "7", title: "Yoga Mat", category: "Sports & Fitness", description: "Non-slip exercise mat",
+    condition: "Gently Used", transactionType: "Free to Borrow", price: 0,
+    hostelBlock: "C Block", images: [], isAvailable: true,
+    owner: { _id: "u3", name: "Carol", collegeEmail: "carol@college.edu", hostelBlock: "C Block" },
+  },
+  {
+    _id: "8", title: "Notebook Bundle", category: "Stationery", description: "Pack of 5 spiral notebooks",
+    condition: "Like New", transactionType: "Free to Borrow", price: 0,
+    hostelBlock: "D Block", images: [], isAvailable: true,
+    owner: { _id: "u4", name: "Dave", collegeEmail: "dave@college.edu", hostelBlock: "D Block" },
+  },
+  {
+    _id: "9", title: "Mini Fridge", category: "Appliances", description: "4L mini fridge, works great",
+    condition: "Gently Used", transactionType: "Available for Lease", price: 80,
+    hostelBlock: "A Block", images: [], isAvailable: true,
+    owner: { _id: "u1", name: "Alice", collegeEmail: "alice@college.edu", hostelBlock: "A Block" },
+  },
 ];
 
 const filterMock = (params) => {

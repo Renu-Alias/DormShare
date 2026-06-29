@@ -49,7 +49,7 @@ export const validateItem = (req, res, next) => {
         return res.status(400).json({ message: "Item title is required" });
     }
 
-    const validCategories = ["Books", "Electronics", "Bedding", "Furniture", "Others"];
+    const validCategories = ["Books", "Electronics", "Bedding", "Furniture", "Kitchen", "Clothing", "Sports & Fitness", "Stationery", "Appliances", "Others"];
     if (!category || !validCategories.includes(category)) {
         return res.status(400).json({ message: "Valid category is required" });
     }

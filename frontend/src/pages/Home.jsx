@@ -21,6 +21,11 @@ function Home() {
           <CategoryCard title="Electronics" />
           <CategoryCard title="Bedding" />
           <CategoryCard title="Furniture" />
+          <CategoryCard title="Kitchen" />
+          <CategoryCard title="Clothing" />
+          <CategoryCard title="Sports & Fitness" />
+          <CategoryCard title="Stationery" />
+          <CategoryCard title="Appliances" />
           <CategoryCard title="Others" />
         </div>
       </section>

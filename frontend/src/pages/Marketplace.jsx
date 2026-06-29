@@ -74,6 +74,11 @@ function Marketplace() {
             <option>Electronics</option>
             <option>Bedding</option>
             <option>Furniture</option>
+            <option>Kitchen</option>
+            <option>Clothing</option>
+            <option>Sports & Fitness</option>
+            <option>Stationery</option>
+            <option>Appliances</option>
             <option>Others</option>
           </select>
 
@@ -82,7 +87,7 @@ function Marketplace() {
             onChange={(e) => setHostelBlock(e.target.value)}
             className="border border-border rounded-lg px-4 py-2 text-sm text-text bg-white outline-none focus:border-text transition-colors"
           >
-            <option value="">All Hostels</option>
+            <option value="">All Blocks</option>
             <option>A Block</option>
             <option>B Block</option>
             <option>C Block</option>

@@ -22,7 +22,7 @@ const itemSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["Books", "Electronics", "Bedding", "Furniture", "Others"],
+      enum: ["Books", "Electronics", "Bedding", "Furniture", "Kitchen", "Clothing", "Sports & Fitness", "Stationery", "Appliances", "Others"],
     },
 
     condition: {

@@ -10,33 +10,30 @@ function Navbar() {
     navigate("/");
   };
 
-  return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
+  const linkClass = ({ isActive }) =>
+    `text-sm font-medium transition-colors ${isActive ? "text-accent" : "text-slate-600 hover:text-slate-900"}`;
 
-        <Link
-          to="/"
-          className="text-3xl font-bold text-blue-700"
-        >
+  return (
+    <nav className="sticky top-0 z-50 bg-white border-b border-border">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-16">
+        <Link to="/" className="text-xl font-semibold tracking-tight text-slate-900">
           DormShare
         </Link>
 
-        <div className="flex gap-8 text-gray-700 font-medium">
-          <Link to="/">Home</Link>
-          <Link to="/marketplace">Marketplace</Link>
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/create">Create Listing</Link>
+        <div className="hidden md:flex items-center gap-8">
+          <Link to="/" className={linkClass}>Home</Link>
+          <Link to="/marketplace" className={linkClass}>Marketplace</Link>
+          <Link to="/dashboard" className={linkClass}>Dashboard</Link>
+          <Link to="/create" className={linkClass}>Create</Link>
         </div>
 
-        <div className="flex gap-3 items-center">
+        <div className="flex items-center gap-3">
           {user ? (
             <>
-              <span className="text-gray-700 font-medium hidden md:inline">
-                Hi, {user.name}
-              </span>
+              <span className="text-sm text-slate-500 hidden sm:inline">{user.name}</span>
               <button
                 onClick={handleLogout}
-                className="border border-blue-600 px-4 py-2 rounded-lg text-blue-600"
+                className="text-sm px-4 py-1.5 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 Logout
               </button>
@@ -45,21 +42,19 @@ function Navbar() {
             <>
               <Link
                 to="/login"
-                className="border border-blue-600 px-4 py-2 rounded-lg text-blue-600"
+                className="text-sm px-4 py-1.5 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 Login
               </Link>
-
               <Link
                 to="/register"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+                className="text-sm px-4 py-1.5 rounded-md bg-accent text-white hover:opacity-90 transition-opacity"
               >
                 Register
               </Link>
             </>
           )}
         </div>
-
       </div>
     </nav>
   );

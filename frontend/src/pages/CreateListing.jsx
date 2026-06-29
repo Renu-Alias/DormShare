@@ -31,10 +31,7 @@ function CreateListing() {
       formData.append("transactionType", transactionType);
       formData.append("price", price);
       formData.append("hostelBlock", hostelBlock);
-
-      images.forEach((file) => {
-        formData.append("images", file);
-      });
+      images.forEach((file) => formData.append("images", file));
 
       await createItem(formData);
       navigate("/marketplace");
@@ -48,132 +45,126 @@ function CreateListing() {
   return (
     <>
       <Navbar />
-
-      <div className="max-w-3xl mx-auto mt-10 mb-10 shadow-lg rounded-lg p-8">
-
-        <h1 className="text-3xl font-bold mb-8 text-center">
-          Create New Listing
-        </h1>
+      <div className="max-w-2xl mx-auto px-6 py-10">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Create Listing</h1>
+        <p className="mt-1 text-sm text-slate-500">Share an item with your campus community.</p>
 
         {error && (
-          <p className="text-red-500 text-center mb-4">{error}</p>
+          <div className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+            {error}
+          </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-
+        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
           <div>
-            <label className="block mb-2 font-medium">
-              Title
-            </label>
+            <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1">Title</label>
             <input
+              id="title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full border rounded p-3"
+              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
               required
             />
           </div>
 
           <div>
-            <label className="block mb-2 font-medium">
-              Description
-            </label>
+            <label htmlFor="desc" className="block text-sm font-medium text-slate-700 mb-1">Description</label>
             <textarea
+              id="desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows="4"
-              className="w-full border rounded p-3"
+              rows={4}
+              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent resize-none"
               required
               minLength={10}
             />
           </div>
 
-          <div>
-            <label className="block mb-2 font-medium">
-              Category
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full border rounded p-3"
-            >
-              <option>Books</option>
-              <option>Electronics</option>
-              <option>Bedding</option>
-              <option>Furniture</option>
-              <option>Others</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="cat" className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+              <select
+                id="cat"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+              >
+                <option>Books</option>
+                <option>Electronics</option>
+                <option>Bedding</option>
+                <option>Furniture</option>
+                <option>Others</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="cond" className="block text-sm font-medium text-slate-700 mb-1">Condition</label>
+              <select
+                id="cond"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+              >
+                <option>Like New</option>
+                <option>Gently Used</option>
+                <option>Heavy Wear</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="block mb-2 font-medium">
-              Condition
-            </label>
-            <select
-              value={condition}
-              onChange={(e) => setCondition(e.target.value)}
-              className="w-full border rounded p-3"
-            >
-              <option>Like New</option>
-              <option>Gently Used</option>
-              <option>Heavy Wear</option>
-            </select>
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="txn" className="block text-sm font-medium text-slate-700 mb-1">Type</label>
+              <select
+                id="txn"
+                value={transactionType}
+                onChange={(e) => setTransactionType(e.target.value)}
+                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+              >
+                <option>Free to Borrow</option>
+                <option>Available for Lease</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="block mb-2 font-medium">
-              Transaction Type
-            </label>
-            <select
-              value={transactionType}
-              onChange={(e) => setTransactionType(e.target.value)}
-              className="w-full border rounded p-3"
-            >
-              <option>Free to Borrow</option>
-              <option>Available for Lease</option>
-            </select>
+            <div>
+              <label htmlFor="block" className="block text-sm font-medium text-slate-700 mb-1">Hostel Block</label>
+              <select
+                id="block"
+                value={hostelBlock}
+                onChange={(e) => setHostelBlock(e.target.value)}
+                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+              >
+                <option>A Block</option>
+                <option>B Block</option>
+                <option>C Block</option>
+                <option>D Block</option>
+              </select>
+            </div>
           </div>
 
           {transactionType === "Available for Lease" && (
             <div>
-              <label className="block mb-2 font-medium">
-                Price (₹)
-              </label>
+              <label htmlFor="price" className="block text-sm font-medium text-slate-700 mb-1">Price (&there4;)</label>
               <input
+                id="price"
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
-                className="w-full border rounded p-3"
+                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
                 min="0"
               />
             </div>
           )}
 
           <div>
-            <label className="block mb-2 font-medium">
-              Hostel Block
-            </label>
-            <select
-              value={hostelBlock}
-              onChange={(e) => setHostelBlock(e.target.value)}
-              className="w-full border rounded p-3"
-            >
-              <option>A Block</option>
-              <option>B Block</option>
-              <option>C Block</option>
-              <option>D Block</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Upload Images
-            </label>
+            <label htmlFor="images" className="block text-sm font-medium text-slate-700 mb-1">Images</label>
             <input
+              id="images"
               type="file"
               multiple
               onChange={(e) => setImages(Array.from(e.target.files))}
-              className="w-full"
+              className="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border file:border-border file:text-sm file:font-medium file:text-slate-700 file:bg-white hover:file:bg-slate-50"
               accept="image/*"
             />
           </div>
@@ -181,15 +172,12 @@ function CreateListing() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 disabled:opacity-50"
+            className="w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {loading ? "Creating..." : "Create Listing"}
           </button>
-
         </form>
-
       </div>
-
       <Footer />
     </>
   );

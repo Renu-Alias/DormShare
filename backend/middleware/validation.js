@@ -36,20 +36,20 @@ export const validateLogin = (req, res, next) => {
 
 export const validateItem = (req, res, next) => {
     const {
-        itemName,
+        title,
         category,
         description,
         condition,
         transactionType,
         price,
-        location
+        hostelBlock
     } = req.body;
 
-    if (!itemName || typeof itemName !== "string" || itemName.trim().length < 2) {
-        return res.status(400).json({ message: "Item name is required" });
+    if (!title || typeof title !== "string" || title.trim().length < 2) {
+        return res.status(400).json({ message: "Item title is required" });
     }
 
-    const validCategories = ["Books", "Electronics", "Bedding", "Kitchen", "Other"];
+    const validCategories = ["Books", "Electronics", "Bedding", "Furniture", "Others"];
     if (!category || !validCategories.includes(category)) {
         return res.status(400).json({ message: "Valid category is required" });
     }
@@ -76,8 +76,8 @@ export const validateItem = (req, res, next) => {
         req.body.price = 0;
     }
 
-    if (!location || typeof location !== "string" || location.trim().length < 2) {
-        return res.status(400).json({ message: "Location is required" });
+    if (!hostelBlock || !["A Block", "B Block", "C Block", "D Block"].includes(hostelBlock)) {
+        return res.status(400).json({ message: "Valid hostel block is required" });
     }
 
     next();

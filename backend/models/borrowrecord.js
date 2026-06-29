@@ -14,6 +14,12 @@ const borrowRecordSchema = new mongoose.Schema(
         required:true
     },
 
+    lender:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true
+    },
+
     borrowDate:{
         type:Date,
         default:Date.now
@@ -35,7 +41,9 @@ const borrowRecordSchema = new mongoose.Schema(
             "Approved",
             "Borrowed",
             "Returned",
-            "Cancelled"
+            "Cancelled",
+            "Extension Requested",
+            "Overdue"
         ],
         default:"Pending"
     },

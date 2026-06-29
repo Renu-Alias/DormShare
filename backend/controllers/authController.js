@@ -7,9 +7,12 @@ import {
     validateLogin
 } from "../middleware/validation.js";
 
-const allowedDomains = (process.env.ALLOWED_EMAIL_DOMAINS || "@mits.ac.in").split(",");
+const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS
+    ? process.env.ALLOWED_EMAIL_DOMAINS.split(",")
+    : null;
 
 const isValidCollegeEmail = (email) => {
+    if (!allowedDomains) return true;
     const domain = email.split("@")[1];
     return allowedDomains.some((allowed) => domain === allowed.replace("@", ""));
 };
@@ -138,15 +141,14 @@ export const forgotPassword = async (req, res) => {
             return res.status(404).json({ message: "No user found with that email" });
         }
 
-        const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "15m"
-        });
+        const rawToken = crypto.randomBytes(32).toString("hex");
+        const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
 
-        user.resetPasswordToken = resetToken;
+        user.resetPasswordToken = hashedToken;
         user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
         await user.save();
 
-        const resetUrl = `${req.protocol}://${req.get("host")}/api/reset-password/${resetToken}`;
+        const resetUrl = `${req.protocol}://${req.get("host")}/api/reset-password/${rawToken}`;
 
         const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a POST request to: \n\n ${resetUrl}`;
 

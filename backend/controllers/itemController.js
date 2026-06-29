@@ -1,6 +1,4 @@
 import Item from "../models/item.js";
-import { protect } from "../middleware/auth.js";
-import { validateItem } from "../middleware/validation.js";
 
 export const createItem = async (req, res) => {
     try {

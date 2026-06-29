@@ -27,7 +27,6 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
   }, [fetchData]);
 
@@ -80,11 +79,24 @@ function Dashboard() {
     }
   };
 
+  const statusBadge = (status) => {
+    const styles = {
+      "Borrowed": "bg-blue-50 text-blue-700",
+      "Returned": "bg-green-50 text-green-700",
+      "Pending": "bg-yellow-50 text-yellow-700",
+      "Overdue": "bg-red-50 text-red-700",
+      "Extension Requested": "bg-purple-50 text-purple-700",
+      "Approved": "bg-blue-50 text-blue-700",
+      "Cancelled": "bg-slate-50 text-slate-500",
+    };
+    return `text-xs px-2 py-0.5 rounded-full font-medium ${styles[status] || "bg-slate-50 text-slate-500"}`;
+  };
+
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="max-w-7xl mx-auto p-8 text-center">Loading...</div>
+        <div className="max-w-7xl mx-auto px-6 py-10 text-sm text-slate-400">Loading...</div>
       </>
     );
   }
@@ -93,183 +105,154 @@ function Dashboard() {
     <>
       <Navbar />
 
-      <div className="max-w-7xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Dashboard</h1>
+        <p className="mt-1 text-sm text-slate-500">Manage your listings and borrowed items.</p>
 
-        <h1 className="text-4xl font-bold mb-8">
-          My Dashboard
-        </h1>
-
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="mt-8 grid md:grid-cols-2 gap-6">
 
           {/* My Listings */}
-          <div className="border rounded-lg shadow p-6">
-            <h2 className="text-2xl font-semibold mb-4">
-              My Listings
-            </h2>
+          <div className="rounded-lg border border-border p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-slate-900">My Listings</h2>
+              <Link to="/create" className="text-xs font-medium text-accent hover:opacity-80">
+                + New
+              </Link>
+            </div>
 
             {myItems.length === 0 ? (
-              <p className="text-gray-500 mb-4">No listings yet.</p>
+              <p className="text-sm text-slate-400">No listings yet.</p>
             ) : (
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {myItems.map((item) => (
-                  <li key={item._id} className="border rounded p-3 flex justify-between items-center">
-                    <div>
-                      <span className="font-medium">{item.title}</span>
-                      <span className="text-sm text-gray-500 ml-2">({item.category})</span>
+                  <li key={item._id} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-slate-900 truncate">{item.title}</p>
+                      <p className="text-xs text-slate-400">{item.category}</p>
                     </div>
-                    <div className="space-x-2">
-                      <button
-                        onClick={() => handleDelete(item._id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded text-sm"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="text-xs text-red-500 hover:text-red-700 transition-colors shrink-0 ml-2"
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
               </ul>
             )}
-
-            <Link
-              to="/create"
-              className="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              + Create Listing
-            </Link>
           </div>
 
           {/* Borrowed Items */}
-          <div className="border rounded-lg shadow p-6">
-
-            <h2 className="text-2xl font-semibold mb-4">
-              Borrowed Items
-            </h2>
+          <div className="rounded-lg border border-border p-5">
+            <h2 className="text-sm font-semibold text-slate-900 mb-4">Borrowed Items</h2>
 
             {leases.borrowed.length === 0 ? (
-              <p className="text-gray-500">No borrowed items.</p>
+              <p className="text-sm text-slate-400">No borrowed items.</p>
             ) : (
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {leases.borrowed.map((lease) => (
-                  <li key={lease._id} className="border rounded p-3 flex justify-between items-center">
-                    <div>
-                      <span className="font-medium">{lease.item?.title || "Unknown"}</span>
-                      <span className="text-sm text-gray-500 ml-2">
-                        Due: {new Date(lease.expectedReturnDate).toLocaleDateString()}
-                      </span>
-                      <span className={`ml-2 text-xs px-2 py-1 rounded ${
-                        lease.status === "Overdue" ? "bg-red-100 text-red-800" :
-                        lease.status === "Borrowed" ? "bg-blue-100 text-blue-800" :
-                        "bg-yellow-100 text-yellow-800"
-                      }`}>
-                        {lease.status}
-                      </span>
+                  <li key={lease._id} className="rounded-md border border-border px-3 py-2">
+                    <div className="flex items-center justify-between">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-slate-900 truncate">{lease.item?.title || "Unknown"}</p>
+                        <p className="text-xs text-slate-400">
+                          Due {new Date(lease.expectedReturnDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <span className={statusBadge(lease.status)}>{lease.status}</span>
                     </div>
-                    <div className="flex gap-2 items-center">
+
+                    <div className="mt-2 flex gap-2">
                       {lease.status === "Borrowed" && (
                         <>
                           <button
                             onClick={() => setExtensionForm({ leaseId: lease._id, days: "" })}
-                            className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
+                            className="text-xs px-2.5 py-1 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
                           >
                             Extend
                           </button>
                           <button
                             onClick={() => handleReturn(lease._id)}
-                            className="bg-green-600 text-white px-3 py-1 rounded text-sm"
+                            className="text-xs px-2.5 py-1 rounded-md bg-accent text-white hover:opacity-90 transition-opacity"
                           >
                             Return
                           </button>
                         </>
                       )}
                       {lease.status === "Extension Requested" && (
-                        <span className="text-yellow-600 text-sm">Pending approval</span>
+                        <span className="text-xs text-slate-400">Awaiting approval</span>
                       )}
                     </div>
-                  </li>
-                ))}
-              </ul>
-            )}
 
-            {extensionForm.leaseId && (
-              <form onSubmit={handleRequestExtension} className="mt-4 p-3 border rounded bg-gray-50 flex gap-2 items-end">
-                <div>
-                  <label className="block text-sm mb-1">Extension Days</label>
-                  <input
-                    type="number"
-                    value={extensionForm.days}
-                    onChange={(e) => setExtensionForm({ ...extensionForm, days: e.target.value })}
-                    className="border rounded p-2 w-24"
-                    min="1"
-                    required
-                  />
-                </div>
-                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-                  Submit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setExtensionForm({ leaseId: "", days: "" })}
-                  className="bg-gray-400 text-white px-4 py-2 rounded"
-                >
-                  Cancel
-                </button>
-              </form>
-            )}
-          </div>
-
-          {/* Lent Items */}
-          <div className="border rounded-lg shadow p-6 md:col-span-2">
-            <h2 className="text-2xl font-semibold mb-4">
-              Lent Items
-            </h2>
-
-            {leases.lent.length === 0 ? (
-              <p className="text-gray-500">No items lent out.</p>
-            ) : (
-              <ul className="space-y-3">
-                {leases.lent.map((lease) => (
-                  <li key={lease._id} className="border rounded p-3 flex justify-between items-center">
-                    <div>
-                      <span className="font-medium">{lease.item?.title || "Unknown"}</span>
-                      <span className="text-sm text-gray-500 ml-2">
-                        Borrower: {lease.borrower?.name || "Unknown"}
-                      </span>
-                      <span className="text-sm text-gray-500 ml-2">
-                        Due: {new Date(lease.expectedReturnDate).toLocaleDateString()}
-                      </span>
-                      <span className={`ml-2 text-xs px-2 py-1 rounded ${
-                        lease.status === "Extension Requested" ? "bg-yellow-100 text-yellow-800" :
-                        lease.status === "Borrowed" ? "bg-blue-100 text-blue-800" :
-                        lease.status === "Overdue" ? "bg-red-100 text-red-800" :
-                        "bg-gray-100 text-gray-800"
-                      }`}>
-                        {lease.status}
-                      </span>
-                    </div>
-                    <div>
-                      {lease.status === "Extension Requested" && (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleApproveExtension(lease._id)}
-                            className="bg-green-600 text-white px-3 py-1 rounded text-sm"
-                          >
-                            Approve
-                          </button>
-                          <button
-                            onClick={() => handleRejectExtension(lease._id)}
-                            className="bg-red-600 text-white px-3 py-1 rounded text-sm"
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    {extensionForm.leaseId === lease._id && (
+                      <form onSubmit={handleRequestExtension} className="mt-3 flex items-center gap-2">
+                        <input
+                          type="number"
+                          value={extensionForm.days}
+                          onChange={(e) => setExtensionForm({ ...extensionForm, days: e.target.value })}
+                          className="w-16 border border-border rounded-md px-2 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-accent"
+                          placeholder="Days"
+                          min="1"
+                          required
+                        />
+                        <button type="submit" className="text-xs px-2.5 py-1 rounded-md bg-accent text-white hover:opacity-90 transition-opacity">
+                          Submit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setExtensionForm({ leaseId: "", days: "" })}
+                          className="text-xs px-2.5 py-1 rounded-md border border-border text-slate-500 hover:bg-slate-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </form>
+                    )}
                   </li>
                 ))}
               </ul>
             )}
           </div>
+        </div>
 
+        {/* Lent Items */}
+        <div className="mt-6 rounded-lg border border-border p-5">
+          <h2 className="text-sm font-semibold text-slate-900 mb-4">Lent Items</h2>
+
+          {leases.lent.length === 0 ? (
+            <p className="text-sm text-slate-400">No items lent out.</p>
+          ) : (
+            <ul className="space-y-2">
+              {leases.lent.map((lease) => (
+                <li key={lease._id} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-slate-900 truncate">{lease.item?.title || "Unknown"}</p>
+                    <p className="text-xs text-slate-400">
+                      {lease.borrower?.name || "Unknown"} &middot; Due {new Date(lease.expectedReturnDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 ml-3">
+                    <span className={statusBadge(lease.status)}>{lease.status}</span>
+                    {lease.status === "Extension Requested" && (
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleApproveExtension(lease._id)}
+                          className="text-xs px-2.5 py-1 rounded-md bg-accent text-white hover:opacity-90 transition-opacity"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleRejectExtension(lease._id)}
+                          className="text-xs px-2.5 py-1 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
       </div>

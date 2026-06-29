@@ -10,28 +10,22 @@ function Home() {
       <Hero />
       <SearchBar />
 
-      <section className="max-w-7xl mx-auto py-20 px-8">
-
-        <h2 className="text-4xl font-bold mb-10 text-center">
-          Browse Categories
+      <section className="max-w-5xl mx-auto px-6 py-20">
+        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 text-center">
+          Browse by Category
         </h2>
+        <p className="mt-2 text-sm text-slate-500 text-center">
+          Find what you need from your fellow students.
+        </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-
-          <CategoryCard title="Books" emoji="📚" />
-
-          <CategoryCard title="Electronics" emoji="💻" />
-
-          <CategoryCard title="Bedding" emoji="🛏️" />
-
-          <CategoryCard title="Furniture" emoji="🪑" />
-
-          <CategoryCard title="Others" emoji="📦" />
-
+        <div className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <CategoryCard title="Books" />
+          <CategoryCard title="Electronics" />
+          <CategoryCard title="Bedding" />
+          <CategoryCard title="Furniture" />
+          <CategoryCard title="Others" />
         </div>
-
       </section>
-
     </>
   );
 }

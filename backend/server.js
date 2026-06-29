@@ -65,7 +65,7 @@ cron.schedule("0 8 * * *", async () => {
         threeDaysFromNow.setDate(now.getDate() + 3);
 
         const upcomingLeases = await BorrowRecord.find({
-            status: { $in: ["Borrowed"] },
+            status: "Borrowed",
             expectedReturnDate: { $lte: threeDaysFromNow, $gte: now }
         }).populate("borrower", "collegeEmail name").populate("item", "title");
 

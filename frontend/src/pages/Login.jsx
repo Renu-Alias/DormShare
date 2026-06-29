@@ -14,7 +14,6 @@ function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       await login(collegeEmail, password);
       navigate("/dashboard");
@@ -26,56 +25,70 @@ function Login() {
   };
 
   return (
-    <>
-      <div className="flex justify-center mt-20">
-        <div className="w-96 shadow-lg rounded-lg p-8">
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <Link to="/" className="text-xl font-semibold tracking-tight text-slate-900">
+            DormShare
+          </Link>
+          <h1 className="mt-6 text-2xl font-semibold tracking-tight text-slate-900">Welcome back</h1>
+          <p className="mt-1 text-sm text-slate-500">Sign in to your account</p>
+        </div>
 
-          <h2 className="text-3xl font-bold text-center mb-6">
-            Login
-          </h2>
-
+        <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <p className="text-red-500 text-center mb-4">{error}</p>
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+              {error}
+            </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
+              College Email
+            </label>
             <input
+              id="email"
               type="email"
-              placeholder="College Email"
+              placeholder="you@college.edu"
               value={collegeEmail}
               onChange={(e) => setCollegeEmail(e.target.value)}
-              className="w-full border p-3 rounded"
+              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-shadow"
               required
             />
+          </div>
 
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
+              Password
+            </label>
             <input
+              id="password"
               type="password"
-              placeholder="Password"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border p-3 rounded"
+              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-shadow"
               required
             />
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 disabled:opacity-50"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
 
-          <p className="text-center mt-4 text-gray-600">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-blue-600 hover:underline">
-              Register here
-            </Link>
-          </p>
-
-        </div>
+        <p className="mt-6 text-center text-sm text-slate-500">
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="font-medium text-accent hover:opacity-80">
+            Create one
+          </Link>
+        </p>
       </div>
-    </>
+    </div>
   );
 }
 

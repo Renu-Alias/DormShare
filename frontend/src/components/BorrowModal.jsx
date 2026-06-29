@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { borrowItem } from "../services/leaseService";
 
 function BorrowModal({ item, onClose, onSuccess }) {
+  const { user } = useAuth();
   const [returnDate, setReturnDate] = useState("");
-  const [contactRoom, setContactRoom] = useState("");
-  const [contactBlock, setContactBlock] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -14,7 +14,7 @@ function BorrowModal({ item, onClose, onSuccess }) {
   minDate.setDate(minDate.getDate() + 1);
   const minDateStr = minDate.toISOString().split("T")[0];
 
-  const valid = returnDate && contactRoom.trim() && contactBlock.trim() && contactPhone.trim().length >= 5;
+  const valid = returnDate && contactPhone.trim().length >= 5;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ function BorrowModal({ item, onClose, onSuccess }) {
     setSubmitting(true);
     setError("");
     try {
-      await borrowItem(item._id, new Date(returnDate).toISOString(), contactRoom.trim(), contactBlock.trim(), contactPhone.trim());
+      await borrowItem(item._id, new Date(returnDate).toISOString(), user?.roomNumber || "", user?.hostelBlock || "", contactPhone.trim());
       setDone(true);
       setTimeout(() => {
         onSuccess?.();
@@ -71,46 +71,24 @@ function BorrowModal({ item, onClose, onSuccess }) {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-3">
-              <p className="text-xs font-medium text-text">Your Contact Details</p>
+              <p className="text-xs text-muted">
+                Room: <span className="font-medium text-text">{user?.roomNumber || "—"}</span>
+                {" · "}Block: <span className="font-medium text-text">{user?.hostelBlock || "—"}</span>
+              </p>
 
               <div>
-                <input
-                  type="text"
-                  value={contactRoom}
-                  onChange={(e) => setContactRoom(e.target.value)}
-                  placeholder="Room number"
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm text-text outline-none focus:border-text transition-colors"
-                  required
-                />
-              </div>
-
-              <div>
-                <select
-                  value={contactBlock}
-                  onChange={(e) => setContactBlock(e.target.value)}
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm text-text bg-white outline-none focus:border-text transition-colors"
-                  required
-                >
-                  <option value="">Select hostel block</option>
-                  <option>A Block</option>
-                  <option>B Block</option>
-                  <option>C Block</option>
-                  <option>D Block</option>
-                </select>
-              </div>
-
-              <div>
+                <label className="block text-xs font-medium text-text mb-1.5">Phone Number</label>
                 <input
                   type="tel"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
-                  placeholder="Phone number"
+                  placeholder="Your phone number"
                   className="w-full border border-border rounded-lg px-3 py-2 text-sm text-text outline-none focus:border-text transition-colors"
                   required
                 />
               </div>
 
-              <div className="pt-1">
+              <div>
                 <label className="block text-xs font-medium text-text mb-1.5">Expected Return Date</label>
                 <input
                   type="date"

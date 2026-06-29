@@ -103,7 +103,13 @@ export const getMe = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.user._id, req.body, {
+    const allowed = {};
+    if (req.body.name) allowed.name = req.body.name;
+    if (req.body.hostelBlock) allowed.hostelBlock = req.body.hostelBlock;
+    if (req.body.roomNumber !== undefined) allowed.roomNumber = req.body.roomNumber;
+    if (req.body.profileImage !== undefined) allowed.profileImage = req.body.profileImage;
+
+    const user = await User.findByIdAndUpdate(req.user._id, allowed, {
       new: true,
       runValidators: true,
     });

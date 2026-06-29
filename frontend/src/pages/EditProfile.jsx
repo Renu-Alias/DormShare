@@ -9,6 +9,7 @@ function EditProfile() {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState(user?.name || "");
+  const [hostelBlock, setHostelBlock] = useState(user?.hostelBlock || "A Block");
   const [roomNumber, setRoomNumber] = useState(user?.roomNumber || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +21,7 @@ function EditProfile() {
     setSaved(false);
     setLoading(true);
     try {
-      const { data } = await api.put("/auth/updateprofile", { name, roomNumber });
+      const { data } = await api.put("/auth/updateprofile", { name, hostelBlock, roomNumber });
       updateUser(data);
       setSaved(true);
       setTimeout(() => navigate("/dashboard"), 1500);
@@ -74,14 +75,18 @@ function EditProfile() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Hostel Block</label>
-            <input
-              type="text"
-              value={user?.hostelBlock || ""}
-              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-muted bg-surface outline-none cursor-not-allowed"
-              disabled
-            />
-            <p className="mt-1 text-xs text-muted">Hostel block is fixed after registration.</p>
+            <label htmlFor="block" className="block text-sm font-medium text-text mb-1.5">Hostel Block</label>
+            <select
+              id="block"
+              value={hostelBlock}
+              onChange={(e) => setHostelBlock(e.target.value)}
+              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
+            >
+              <option>A Block</option>
+              <option>B Block</option>
+              <option>C Block</option>
+              <option>D Block</option>
+            </select>
           </div>
 
           <div>

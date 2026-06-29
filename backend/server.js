@@ -6,9 +6,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import itemRoutes from "./routes/itemRouts.js";
 import leaseRoutes from "./routes/leaseRoutes.js";
-import { protect } from "./middleware/auth.js";
 import rateLimit from "express-rate-limit";
-import mongoSanitize from "express-mongo-sanitize";
 
 dotenv.config();
 
@@ -25,7 +23,6 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(mongoSanitize());
 app.use(limiter);
 
 app.get("/", (req, res) => {

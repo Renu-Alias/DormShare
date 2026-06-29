@@ -21,7 +21,7 @@ export const register = async (req, res) => {
     try {
         const { name, collegeEmail, password, hostelBlock } = req.body;
 
-        const existingUser = await User.findOne({ collegeEmail });
+        const existingUser = await User.findOne({ collegeEmail: collegeEmail.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists with this college email" });
         }
@@ -55,7 +55,7 @@ export const login = async (req, res) => {
     try {
         const { collegeEmail, password } = req.body;
 
-        const user = await User.findOne({ collegeEmail }).select("+password");
+        const user = await User.findOne({ collegeEmail: collegeEmail.toLowerCase() }).select("+password");
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
@@ -135,7 +135,7 @@ export const updatePassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
     try {
         const { collegeEmail } = req.body;
-        const user = await User.findOne({ collegeEmail });
+        const user = await User.findOne({ collegeEmail: collegeEmail.toLowerCase() });
 
         if (!user) {
             return res.status(404).json({ message: "No user found with that email" });

@@ -2,57 +2,60 @@ import { Link } from "react-router-dom";
 
 const icons = {
   Books: [
-    "M4 19.5v-15A2.5 2.5 0 016.5 2H20v20H6.5a2.5 2.5 0 010-5H20", // outline
-    "M4 19.5A2.5 2.5 0 016.5 17H20", // accent stroke
+    "M4 4h16v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4z",
+    "M8 8h8v1H8zM8 11h6v1H8zM8 14h4v1H8z",
   ],
   Electronics: [
-    "M4 7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7z",
-    "M9 19l1 1h4l1-1",
+    "M6 3h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2z",
+    "M10 19h4",
   ],
   Bedding: [
-    "M3 7l9-4 9 4",
-    "M3 7v10l9 4m0-14v14",
+    "M3 8l9-5 9 5v11a2 2 0 01-2 2H5a2 2 0 01-2-2V8z",
+    "M12 3v18",
   ],
   Furniture: [
-    "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z",
-    "M9 22V12h6v10",
+    "M5 3h14a2 2 0 012 2v4H3V5a2 2 0 012-2z",
+    "M9 21V9h6v12",
   ],
   Kitchen: [
-    "M15 15l-6-6m6 6l-3 3m3-3l3-3",
-    "M12 21a9 9 0 100-18 9 9 0 000 18z",
+    "M8 3h8v5a4 4 0 01-4 4 4 4 0 01-4-4V3z",
+    "M12 12v8M8 21h8",
   ],
   Clothing: [
-    "M16 7a4 4 0 11-8 0 4 4 0 018 0z",
-    "M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+    "M7 3h10a2 2 0 012 2v3l-4 2v4l-5 5-5-5v-4L5 5a2 2 0 012-2z",
+    "M12 3v16",
   ],
   "Sports & Fitness": [
-    "M13 10V3L4 14h7v7l9-11h-7z",
-    "M13 10V3",
+    "M12 21a9 9 0 100-18 9 9 0 000 18z",
+    "M12 7v5l3 3",
   ],
   Stationery: [
-    "M15.232 5.232l3.536 3.536M9 11l-3.536 3.536",
-    "M6.5 21.036H3v-3.572L16.732 3.732a2.5 2.5 0 113.536 3.536L6.5 21.036z",
+    "M10 3v8l-3 3 3 3v4h4v-4l3-3-3-3V3h-4z",
+    "M7 14h10",
   ],
   Appliances: [
-    "M12 21a9 9 0 100-18 9 9 0 000 18z",
-    "M12 7v6l3 3",
+    "M5 5a2 2 0 012-2h10a2 2 0 012 2v16H5V5z",
+    "M8 13h8v6H8z",
   ],
   Others: [
-    "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z",
-    "M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+    "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+    "",
   ],
 };
 
 function CategoryCard({ title }) {
-  const [outline, accent] = icons[title] || ["", ""];
+  const [bg, fg] = icons[title] || ["", ""];
 
   return (
     <Link to={`/marketplace?category=${encodeURIComponent(title)}`}>
-      <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-white px-6 py-8 shadow-sm hover:shadow-md hover:border-accent/30 hover:-translate-y-0.5 transition-all duration-200">
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
-          {outline && <path strokeLinecap="round" strokeLinejoin="round" d={outline} className="text-muted" />}
-          {accent && <path strokeLinecap="round" strokeLinejoin="round" d={accent} className="text-accent" strokeWidth={1.8} />}
-        </svg>
+      <div className="flex flex-col items-center gap-5 rounded-2xl border border-border bg-gradient-to-br from-white to-accent-light/40 px-6 py-9 shadow-sm hover:shadow-lg hover:shadow-accent/5 hover:border-accent/25 hover:-translate-y-1 transition-all duration-300">
+        <div className="relative">
+          <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="11" fill="#0d9488" fillOpacity="0.08" />
+            {bg && <path d={bg} fill="#0d9488" fillOpacity="0.25" />}
+            {fg && <path d={fg} fill="#0d9488" />}
+          </svg>
+        </div>
         <span className="text-sm font-semibold text-text">{title}</span>
       </div>
     </Link>

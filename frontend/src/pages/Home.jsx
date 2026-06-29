@@ -10,15 +10,13 @@ function Home() {
       <Hero />
       <SearchBar />
 
-      <section className="max-w-5xl mx-auto px-6 py-20">
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 text-center">
-          Browse by Category
-        </h2>
-        <p className="mt-2 text-sm text-slate-500 text-center">
-          Find what you need from your fellow students.
-        </p>
+      <section className="max-w-4xl mx-auto px-8 py-24">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl font-semibold tracking-tight text-text">Browse by Category</h2>
+          <p className="mt-2 text-sm text-secondary">Find what you need from your fellow students.</p>
+        </div>
 
-        <div className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <CategoryCard title="Books" />
           <CategoryCard title="Electronics" />
           <CategoryCard title="Bedding" />

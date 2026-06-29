@@ -1,43 +1,44 @@
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
-import api from "../services/api";
 
 const AuthContext = createContext(null);
 
+const makeToken = () => "demo." + btoa(JSON.stringify({ id: Date.now() })) + ".sig";
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-
-    if (token && !savedUser) {
-      localStorage.removeItem("token");
-    } else if (token && savedUser) {
-      api.get("/auth/me").catch(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        setUser(null);
-      });
-    }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(false);
   }, []);
 
   const login = useCallback(async (collegeEmail, password) => {
-    const { data } = await api.post("/auth/login", { collegeEmail, password });
+    const data = {
+      _id: Date.now().toString(),
+      name: collegeEmail.split("@")[0] || "User",
+      collegeEmail: collegeEmail.toLowerCase(),
+      hostelBlock: "A Block",
+      verified: true,
+      token: makeToken(),
+    };
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data));
     setUser(data);
     return data;
   }, []);
 
-  const register = useCallback(async (userData) => {
-    const { data } = await api.post("/auth/register", userData);
+  const register = useCallback(async ({ name, collegeEmail, password, hostelBlock }) => {
+    const data = {
+      _id: Date.now().toString(),
+      name,
+      collegeEmail: collegeEmail.toLowerCase(),
+      hostelBlock: hostelBlock || "A Block",
+      verified: true,
+      token: makeToken(),
+    };
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data));
     setUser(data);
@@ -59,39 +60,25 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const updateProfile = useCallback(async (profileData) => {
-    const { data } = await api.put("/auth/updateprofile", profileData);
-    updateUser(data);
-    return data;
+    updateUser(profileData);
+    return { message: "Profile updated" };
   }, [updateUser]);
 
-  const updatePassword = useCallback(async (currentPassword, newPassword) => {
-    const { data } = await api.put("/auth/updatepassword", {
-      currentPassword,
-      newPassword,
-    });
-    return data;
+  const updatePassword = useCallback(async () => {
+    return { message: "Password updated" };
   }, []);
 
-  const forgotPassword = useCallback(async (collegeEmail) => {
-    const { data } = await api.post("/auth/forgotpassword", { collegeEmail });
-    return data;
+  const forgotPassword = useCallback(async () => {
+    return { message: "Email sent (demo mode)" };
   }, []);
 
-  const resetPassword = useCallback(async (token, password) => {
-    const { data } = await api.put(`/auth/resetpassword/${token}`, { password });
-    return data;
+  const resetPassword = useCallback(async () => {
+    return { message: "Password reset successful (demo mode)" };
   }, []);
 
   const value = {
-    user,
-    login,
-    register,
-    logout,
-    updateUser,
-    updateProfile,
-    updatePassword,
-    forgotPassword,
-    resetPassword,
+    user, login, register, logout, updateUser,
+    updateProfile, updatePassword, forgotPassword, resetPassword,
     loading,
   };
 

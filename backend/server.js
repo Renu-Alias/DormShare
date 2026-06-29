@@ -2,20 +2,14 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import itemRoutes from "./routes/itemRouts.js";
 import leaseRoutes from "./routes/leaseRoutes.js";
-import cron from "node-cron";
-import transporter from "./config/smtp.js";
-import BorrowRecord from "./models/borrowrecord.js";
 import { protect } from "./middleware/auth.js";
 import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 
 dotenv.config();
-
-connectDB();
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -56,35 +50,6 @@ const errorHandler = (err, req, res, next) => {
 
 app.use(notFound);
 app.use(errorHandler);
-
-cron.schedule("0 8 * * *", async () => {
-    console.log("Running cron job: Checking for upcoming lease returns...");
-    try {
-        const now = new Date();
-        const threeDaysFromNow = new Date();
-        threeDaysFromNow.setDate(now.getDate() + 3);
-
-        const upcomingLeases = await BorrowRecord.find({
-            status: "Borrowed",
-            expectedReturnDate: { $lte: threeDaysFromNow, $gte: now }
-        }).populate("borrower", "collegeEmail name").populate("item", "title");
-
-        for (const lease of upcomingLeases) {
-            if (lease.borrower && lease.borrower.collegeEmail) {
-                await transporter.sendMail({
-                    from: process.env.FROM_EMAIL || "noreply@dormshare.com",
-                    to: lease.borrower.collegeEmail,
-                    subject: "Reminder: Item return due soon",
-                    text: `Hello ${lease.borrower.name},\n\nJust a reminder that the item "${lease.item?.title}" you borrowed is due for return on ${lease.expectedReturnDate.toDateString()}.\n\nPlease return it on time.\n\n- DormShare Team`
-                });
-            }
-        }
-
-        console.log(`Sent ${upcomingLeases.length} reminder(s)`);
-    } catch (error) {
-        console.error("Cron job error:", error);
-    }
-});
 
 const PORT = process.env.PORT || 5000;
 

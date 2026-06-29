@@ -10,30 +10,29 @@ function Navbar() {
     navigate("/");
   };
 
-  const linkClass = ({ isActive }) =>
-    `text-sm font-medium transition-colors ${isActive ? "text-accent" : "text-slate-600 hover:text-slate-900"}`;
+  const linkClass = "text-sm text-secondary hover:text-text transition-colors";
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-border">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-16">
-        <Link to="/" className="text-xl font-semibold tracking-tight text-slate-900">
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-8 h-16">
+        <Link to="/" className="text-base font-semibold tracking-tight text-text">
           DormShare
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-10">
           <Link to="/" className={linkClass}>Home</Link>
           <Link to="/marketplace" className={linkClass}>Marketplace</Link>
           <Link to="/dashboard" className={linkClass}>Dashboard</Link>
           <Link to="/create" className={linkClass}>Create</Link>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {user ? (
             <>
-              <span className="text-sm text-slate-500 hidden sm:inline">{user.name}</span>
+              <span className="text-sm text-secondary hidden sm:inline">{user.name}</span>
               <button
                 onClick={handleLogout}
-                className="text-sm px-4 py-1.5 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
+                className="text-sm px-4 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
               >
                 Logout
               </button>
@@ -42,13 +41,13 @@ function Navbar() {
             <>
               <Link
                 to="/login"
-                className="text-sm px-4 py-1.5 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
+                className="text-sm px-4 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="text-sm px-4 py-1.5 rounded-md bg-accent text-white hover:opacity-90 transition-opacity"
+                className="text-sm px-4 py-1.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
               >
                 Register
               </Link>

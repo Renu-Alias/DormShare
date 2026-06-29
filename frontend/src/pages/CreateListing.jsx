@@ -21,7 +21,6 @@ function CreateListing() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const formData = new FormData();
       formData.append("title", title);
@@ -45,37 +44,37 @@ function CreateListing() {
   return (
     <>
       <Navbar />
-      <div className="max-w-2xl mx-auto px-6 py-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Create Listing</h1>
-        <p className="mt-1 text-sm text-slate-500">Share an item with your campus community.</p>
+      <div className="max-w-2xl mx-auto px-8 py-12">
+        <div className="text-center mb-10">
+          <h1 className="text-2xl font-semibold tracking-tight text-text">Create Listing</h1>
+          <p className="mt-2 text-sm text-secondary">Share an item with your campus community.</p>
+        </div>
 
         {error && (
-          <div className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
-            {error}
-          </div>
+          <div className="mb-6 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5">{error}</div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+            <label htmlFor="title" className="block text-sm font-medium text-text mb-1.5">Title</label>
             <input
               id="title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
+              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder-muted bg-white outline-none focus:border-text transition-colors"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="desc" className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+            <label htmlFor="desc" className="block text-sm font-medium text-text mb-1.5">Description</label>
             <textarea
               id="desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent resize-none"
+              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder-muted bg-white outline-none focus:border-text transition-colors resize-none"
               required
               minLength={10}
             />
@@ -83,12 +82,12 @@ function CreateListing() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="cat" className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+              <label htmlFor="cat" className="block text-sm font-medium text-text mb-1.5">Category</label>
               <select
                 id="cat"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+                className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
               >
                 <option>Books</option>
                 <option>Electronics</option>
@@ -99,12 +98,12 @@ function CreateListing() {
             </div>
 
             <div>
-              <label htmlFor="cond" className="block text-sm font-medium text-slate-700 mb-1">Condition</label>
+              <label htmlFor="cond" className="block text-sm font-medium text-text mb-1.5">Condition</label>
               <select
                 id="cond"
                 value={condition}
                 onChange={(e) => setCondition(e.target.value)}
-                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+                className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
               >
                 <option>Like New</option>
                 <option>Gently Used</option>
@@ -115,12 +114,12 @@ function CreateListing() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="txn" className="block text-sm font-medium text-slate-700 mb-1">Type</label>
+              <label htmlFor="txn" className="block text-sm font-medium text-text mb-1.5">Type</label>
               <select
                 id="txn"
                 value={transactionType}
                 onChange={(e) => setTransactionType(e.target.value)}
-                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+                className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
               >
                 <option>Free to Borrow</option>
                 <option>Available for Lease</option>
@@ -128,12 +127,12 @@ function CreateListing() {
             </div>
 
             <div>
-              <label htmlFor="block" className="block text-sm font-medium text-slate-700 mb-1">Hostel Block</label>
+              <label htmlFor="block" className="block text-sm font-medium text-text mb-1.5">Hostel Block</label>
               <select
                 id="block"
                 value={hostelBlock}
                 onChange={(e) => setHostelBlock(e.target.value)}
-                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-700 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+                className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
               >
                 <option>A Block</option>
                 <option>B Block</option>
@@ -145,26 +144,26 @@ function CreateListing() {
 
           {transactionType === "Available for Lease" && (
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-slate-700 mb-1">Price (&there4;)</label>
+              <label htmlFor="price" className="block text-sm font-medium text-text mb-1.5">Price (&there4;)</label>
               <input
                 id="price"
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
-                className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
+                className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
                 min="0"
               />
             </div>
           )}
 
           <div>
-            <label htmlFor="images" className="block text-sm font-medium text-slate-700 mb-1">Images</label>
+            <label htmlFor="images" className="block text-sm font-medium text-text mb-1.5">Images</label>
             <input
               id="images"
               type="file"
               multiple
               onChange={(e) => setImages(Array.from(e.target.files))}
-              className="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border file:border-border file:text-sm file:font-medium file:text-slate-700 file:bg-white hover:file:bg-slate-50"
+              className="w-full text-sm text-secondary file:mr-3 file:px-4 file:py-1.5 file:rounded-full file:border file:border-border file:text-sm file:font-medium file:text-text file:bg-white hover:file:bg-surface transition-colors"
               accept="image/*"
             />
           </div>
@@ -172,7 +171,7 @@ function CreateListing() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50 transition-colors"
           >
             {loading ? "Creating..." : "Create Listing"}
           </button>

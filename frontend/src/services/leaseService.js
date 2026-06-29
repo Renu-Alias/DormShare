@@ -1,41 +1,27 @@
-import api from "./api";
-
 export const borrowItem = async (itemId, expectedReturnDate) => {
-  const { data } = await api.post("/leases/borrow", {
-    itemId,
-    expectedReturnDate,
-  });
-  return data;
+  return { message: "Borrow request submitted (demo)", _id: Date.now().toString() };
 };
 
 export const returnItem = async (id) => {
-  const { data } = await api.put(`/leases/${id}/return`);
-  return data;
+  return { message: "Item returned (demo)" };
 };
 
 export const requestExtension = async (id, extensionDays) => {
-  const { data } = await api.post(`/leases/${id}/request-extension`, {
-    extensionDays,
-  });
-  return data;
+  return { message: "Extension requested (demo)" };
 };
 
 export const approveExtension = async (id) => {
-  const { data } = await api.put(`/leases/${id}/approve-extension`);
-  return data;
+  return { message: "Extension approved (demo)" };
 };
 
 export const rejectExtension = async (id) => {
-  const { data } = await api.put(`/leases/${id}/reject-extension`);
-  return data;
+  return { message: "Extension rejected (demo)" };
 };
 
 export const getMyLeases = async () => {
-  const { data } = await api.get("/leases/myleases");
-  return data;
+  return { borrowed: [], lent: [] };
 };
 
 export const getLeaseById = async (id) => {
-  const { data } = await api.get(`/leases/${id}`);
-  return data;
+  return null;
 };

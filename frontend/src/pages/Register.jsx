@@ -27,78 +27,66 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <Link to="/" className="text-xl font-semibold tracking-tight text-slate-900">
-            DormShare
-          </Link>
-          <h1 className="mt-6 text-2xl font-semibold tracking-tight text-slate-900">Create an account</h1>
-          <p className="mt-1 text-sm text-slate-500">Join your campus marketplace</p>
+        <div className="text-center mb-10">
+          <Link to="/" className="text-base font-semibold tracking-tight text-text">DormShare</Link>
+          <h1 className="mt-8 text-2xl font-semibold tracking-tight text-text">Create an account</h1>
+          <p className="mt-2 text-sm text-secondary">Join your campus marketplace</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
-              {error}
-            </div>
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5">{error}</div>
           )}
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
-              Full Name
-            </label>
+            <label htmlFor="name" className="block text-sm font-medium text-text mb-1.5">Full Name</label>
             <input
               id="name"
               type="text"
               placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-shadow"
+              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder-muted bg-white outline-none focus:border-text transition-colors"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
-              College Email
-            </label>
+            <label htmlFor="email" className="block text-sm font-medium text-text mb-1.5">College Email</label>
             <input
               id="email"
               type="email"
               placeholder="you@college.edu"
               value={collegeEmail}
               onChange={(e) => setCollegeEmail(e.target.value)}
-              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-shadow"
+              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder-muted bg-white outline-none focus:border-text transition-colors"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
-              Password
-            </label>
+            <label htmlFor="password" className="block text-sm font-medium text-text mb-1.5">Password</label>
             <input
               id="password"
               type="password"
               placeholder="Min 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-shadow"
+              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text placeholder-muted bg-white outline-none focus:border-text transition-colors"
               required
               minLength={6}
             />
           </div>
 
           <div>
-            <label htmlFor="hostel" className="block text-sm font-medium text-slate-700 mb-1">
-              Hostel Block
-            </label>
+            <label htmlFor="hostel" className="block text-sm font-medium text-text mb-1.5">Hostel Block</label>
             <select
               id="hostel"
               value={hostelBlock}
               onChange={(e) => setHostelBlock(e.target.value)}
-              className="w-full border border-border rounded-md px-3 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-shadow"
+              className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
             >
               <option>A Block</option>
               <option>B Block</option>
@@ -110,17 +98,15 @@ function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-accent px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-50 transition-colors"
           >
             {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
+        <p className="mt-8 text-center text-sm text-secondary">
           Already have an account?{" "}
-          <Link to="/login" className="font-medium text-accent hover:opacity-80">
-            Sign in
-          </Link>
+          <Link to="/login" className="font-medium text-text hover:opacity-70 transition-opacity">Sign in</Link>
         </p>
       </div>
     </div>

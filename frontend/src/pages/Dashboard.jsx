@@ -13,10 +13,7 @@ function Dashboard() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [itemsData, leasesData] = await Promise.all([
-        getMyItems(),
-        getMyLeases(),
-      ]);
+      const [itemsData, leasesData] = await Promise.all([getMyItems(), getMyLeases()]);
       setMyItems(itemsData);
       setLeases(leasesData);
     } catch (err) {
@@ -81,22 +78,22 @@ function Dashboard() {
 
   const statusBadge = (status) => {
     const styles = {
-      "Borrowed": "bg-blue-50 text-blue-700",
-      "Returned": "bg-green-50 text-green-700",
-      "Pending": "bg-yellow-50 text-yellow-700",
-      "Overdue": "bg-red-50 text-red-700",
-      "Extension Requested": "bg-purple-50 text-purple-700",
-      "Approved": "bg-blue-50 text-blue-700",
-      "Cancelled": "bg-slate-50 text-slate-500",
+      Borrowed: "bg-stone-100 text-stone-700",
+      Returned: "bg-stone-100 text-stone-700",
+      Pending: "bg-stone-100 text-stone-700",
+      Overdue: "bg-red-50 text-red-700",
+      "Extension Requested": "bg-stone-100 text-stone-700",
+      Approved: "bg-stone-100 text-stone-700",
+      Cancelled: "bg-stone-100 text-stone-400",
     };
-    return `text-xs px-2 py-0.5 rounded-full font-medium ${styles[status] || "bg-slate-50 text-slate-500"}`;
+    return `text-xs px-2 py-0.5 rounded-full font-medium ${styles[status] || "bg-stone-100 text-stone-500"}`;
   };
 
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="max-w-7xl mx-auto px-6 py-10 text-sm text-slate-400">Loading...</div>
+        <div className="max-w-6xl mx-auto px-8 py-12 text-sm text-muted">Loading...</div>
       </>
     );
   }
@@ -105,34 +102,33 @@ function Dashboard() {
     <>
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-500">Manage your listings and borrowed items.</p>
+      <div className="max-w-6xl mx-auto px-8 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-2xl font-semibold tracking-tight text-text">Dashboard</h1>
+          <p className="mt-2 text-sm text-secondary">Manage your listings and borrowed items.</p>
+        </div>
 
-        <div className="mt-8 grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
 
-          {/* My Listings */}
-          <div className="rounded-lg border border-border p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-slate-900">My Listings</h2>
-              <Link to="/create" className="text-xs font-medium text-accent hover:opacity-80">
-                + New
-              </Link>
+          <div className="rounded-xl border border-border bg-white p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-sm font-semibold text-text">My Listings</h2>
+              <Link to="/create" className="text-xs font-medium text-text hover:opacity-70 transition-opacity">+ New</Link>
             </div>
 
             {myItems.length === 0 ? (
-              <p className="text-sm text-slate-400">No listings yet.</p>
+              <p className="text-sm text-muted">No listings yet.</p>
             ) : (
               <ul className="space-y-2">
                 {myItems.map((item) => (
-                  <li key={item._id} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+                  <li key={item._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-900 truncate">{item.title}</p>
-                      <p className="text-xs text-slate-400">{item.category}</p>
+                      <p className="text-sm font-medium text-text truncate">{item.title}</p>
+                      <p className="text-xs text-muted mt-0.5">{item.category}</p>
                     </div>
                     <button
                       onClick={() => handleDelete(item._id)}
-                      className="text-xs text-red-500 hover:text-red-700 transition-colors shrink-0 ml-2"
+                      className="text-xs text-red-500 hover:text-red-700 transition-colors shrink-0 ml-3"
                     >
                       Delete
                     </button>
@@ -142,45 +138,42 @@ function Dashboard() {
             )}
           </div>
 
-          {/* Borrowed Items */}
-          <div className="rounded-lg border border-border p-5">
-            <h2 className="text-sm font-semibold text-slate-900 mb-4">Borrowed Items</h2>
+          <div className="rounded-xl border border-border bg-white p-6">
+            <h2 className="text-sm font-semibold text-text mb-5">Borrowed Items</h2>
 
             {leases.borrowed.length === 0 ? (
-              <p className="text-sm text-slate-400">No borrowed items.</p>
+              <p className="text-sm text-muted">No borrowed items.</p>
             ) : (
               <ul className="space-y-2">
                 {leases.borrowed.map((lease) => (
-                  <li key={lease._id} className="rounded-md border border-border px-3 py-2">
+                  <li key={lease._id} className="rounded-lg border border-border px-4 py-3">
                     <div className="flex items-center justify-between">
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-slate-900 truncate">{lease.item?.title || "Unknown"}</p>
-                        <p className="text-xs text-slate-400">
-                          Due {new Date(lease.expectedReturnDate).toLocaleDateString()}
-                        </p>
+                        <p className="text-sm font-medium text-text truncate">{lease.item?.title || "Unknown"}</p>
+                        <p className="text-xs text-muted mt-0.5">Due {new Date(lease.expectedReturnDate).toLocaleDateString()}</p>
                       </div>
                       <span className={statusBadge(lease.status)}>{lease.status}</span>
                     </div>
 
-                    <div className="mt-2 flex gap-2">
+                    <div className="mt-3 flex gap-2">
                       {lease.status === "Borrowed" && (
                         <>
                           <button
                             onClick={() => setExtensionForm({ leaseId: lease._id, days: "" })}
-                            className="text-xs px-2.5 py-1 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
+                            className="text-xs px-3 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
                           >
                             Extend
                           </button>
                           <button
                             onClick={() => handleReturn(lease._id)}
-                            className="text-xs px-2.5 py-1 rounded-md bg-accent text-white hover:opacity-90 transition-opacity"
+                            className="text-xs px-3 py-1.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
                           >
                             Return
                           </button>
                         </>
                       )}
                       {lease.status === "Extension Requested" && (
-                        <span className="text-xs text-slate-400">Awaiting approval</span>
+                        <span className="text-xs text-muted">Awaiting approval</span>
                       )}
                     </div>
 
@@ -190,18 +183,18 @@ function Dashboard() {
                           type="number"
                           value={extensionForm.days}
                           onChange={(e) => setExtensionForm({ ...extensionForm, days: e.target.value })}
-                          className="w-16 border border-border rounded-md px-2 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-accent"
+                          className="w-20 border border-border rounded-lg px-3 py-1.5 text-xs text-text outline-none focus:border-text transition-colors"
                           placeholder="Days"
                           min="1"
                           required
                         />
-                        <button type="submit" className="text-xs px-2.5 py-1 rounded-md bg-accent text-white hover:opacity-90 transition-opacity">
+                        <button type="submit" className="text-xs px-3 py-1.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors">
                           Submit
                         </button>
                         <button
                           type="button"
                           onClick={() => setExtensionForm({ leaseId: "", days: "" })}
-                          className="text-xs px-2.5 py-1 rounded-md border border-border text-slate-500 hover:bg-slate-50 transition-colors"
+                          className="text-xs px-3 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
                         >
                           Cancel
                         </button>
@@ -214,35 +207,34 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Lent Items */}
-        <div className="mt-6 rounded-lg border border-border p-5">
-          <h2 className="text-sm font-semibold text-slate-900 mb-4">Lent Items</h2>
+        <div className="mt-6 rounded-xl border border-border bg-white p-6">
+          <h2 className="text-sm font-semibold text-text mb-5">Lent Items</h2>
 
           {leases.lent.length === 0 ? (
-            <p className="text-sm text-slate-400">No items lent out.</p>
+            <p className="text-sm text-muted">No items lent out.</p>
           ) : (
             <ul className="space-y-2">
               {leases.lent.map((lease) => (
-                <li key={lease._id} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+                <li key={lease._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-slate-900 truncate">{lease.item?.title || "Unknown"}</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-sm font-medium text-text truncate">{lease.item?.title || "Unknown"}</p>
+                    <p className="text-xs text-muted mt-0.5">
                       {lease.borrower?.name || "Unknown"} &middot; Due {new Date(lease.expectedReturnDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 ml-3">
+                  <div className="flex items-center gap-2 shrink-0 ml-4">
                     <span className={statusBadge(lease.status)}>{lease.status}</span>
                     {lease.status === "Extension Requested" && (
-                      <div className="flex gap-1">
+                      <div className="flex gap-1.5">
                         <button
                           onClick={() => handleApproveExtension(lease._id)}
-                          className="text-xs px-2.5 py-1 rounded-md bg-accent text-white hover:opacity-90 transition-opacity"
+                          className="text-xs px-3 py-1.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => handleRejectExtension(lease._id)}
-                          className="text-xs px-2.5 py-1 rounded-md border border-border text-slate-600 hover:bg-slate-50 transition-colors"
+                          className="text-xs px-3 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
                         >
                           Reject
                         </button>
@@ -254,7 +246,6 @@ function Dashboard() {
             </ul>
           )}
         </div>
-
       </div>
 
       <Footer />

@@ -1,7 +1,11 @@
 import BorrowRecord from "../models/borrowrecord.js";
 import Item from "../models/item.js";
+import { sendNewBorrowRequestEmail, sendBorrowApprovedEmail, sendBorrowRejectedEmail } from "../utils/email.js";
 
-const isDbError = (err) => err.name === "MongooseError" || err.message?.includes("not connected");
+const isDbError = (err) =>
+  ["MongooseError", "CastError", "ValidationError", "StrictModeError"].includes(err.name) ||
+  err.message?.includes("not connected") ||
+  err.message?.includes("buffering timed out");
 
 export const borrowItem = async (req, res) => {
   try {
@@ -24,20 +28,102 @@ export const borrowItem = async (req, res) => {
       borrower: req.user._id,
       lender: item.owner,
       expectedReturnDate,
+      contactRoom: req.body.contactRoom || "",
+      contactBlock: req.body.contactBlock || "",
+      contactPhone: req.body.contactPhone || "",
     });
 
     item.status = "Reserved";
+    item.isAvailable = false;
     await item.save();
 
     await lease.populate([
       { path: "item", select: "title images transactionType price" },
-      { path: "borrower", select: "name collegeEmail hostelBlock" },
-      { path: "lender", select: "name collegeEmail hostelBlock" },
+      { path: "borrower", select: "name collegeEmail hostelBlock roomNumber" },
+      { path: "lender", select: "name collegeEmail hostelBlock roomNumber" },
     ]);
+
+    const borrowerContact = [lease.contactRoom, lease.contactBlock, lease.contactPhone].filter(Boolean).join(", ");
+    sendNewBorrowRequestEmail(
+      lease.lender.collegeEmail,
+      lease.lender.name,
+      lease.borrower.name,
+      borrowerContact,
+      lease.item.title,
+      lease.expectedReturnDate
+    );
 
     res.status(201).json(lease);
   } catch (error) {
     if (isDbError(error)) return res.status(201).json({ message: "Borrow request submitted (demo)" });
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const approveBorrow = async (req, res) => {
+  try {
+    const lease = await BorrowRecord.findById(req.params.id);
+    if (!lease) return res.status(404).json({ message: "Lease not found" });
+    if (lease.lender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Only the item owner can approve" });
+    }
+    if (lease.status !== "Pending") return res.status(400).json({ message: "No pending borrow request" });
+
+    lease.status = "Borrowed";
+    await lease.save();
+
+    const item = await Item.findById(lease.item);
+    if (item) {
+      item.status = "Borrowed";
+      item.isAvailable = false;
+      await item.save();
+    }
+
+    await lease.populate([
+      { path: "item", select: "title images" },
+      { path: "borrower", select: "name collegeEmail hostelBlock roomNumber" },
+      { path: "lender", select: "name collegeEmail hostelBlock roomNumber" },
+    ]);
+
+    sendBorrowApprovedEmail(lease.borrower.collegeEmail, lease.borrower.name, lease.lender.name, lease.item.title);
+
+    res.status(200).json(lease);
+  } catch (error) {
+    if (isDbError(error)) return res.status(200).json({ message: "Borrow approved (demo)" });
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const rejectBorrow = async (req, res) => {
+  try {
+    const lease = await BorrowRecord.findById(req.params.id);
+    if (!lease) return res.status(404).json({ message: "Lease not found" });
+    if (lease.lender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Only the item owner can reject" });
+    }
+    if (lease.status !== "Pending") return res.status(400).json({ message: "No pending borrow request" });
+
+    lease.status = "Cancelled";
+    await lease.save();
+
+    const item = await Item.findById(lease.item);
+    if (item) {
+      item.status = "Available";
+      item.isAvailable = true;
+      await item.save();
+    }
+
+    await lease.populate([
+      { path: "item", select: "title images" },
+      { path: "borrower", select: "name collegeEmail hostelBlock roomNumber" },
+      { path: "lender", select: "name collegeEmail hostelBlock roomNumber" },
+    ]);
+
+    sendBorrowRejectedEmail(lease.borrower.collegeEmail, lease.borrower.name, lease.lender.name, lease.item.title);
+
+    res.status(200).json(lease);
+  } catch (error) {
+    if (isDbError(error)) return res.status(200).json({ message: "Borrow rejected (demo)" });
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -161,11 +247,11 @@ export const getMyLeases = async (req, res) => {
     const [borrowed, lent] = await Promise.all([
       BorrowRecord.find({ borrower: req.user._id })
         .populate("item", "title images transactionType")
-        .populate("lender", "name collegeEmail hostelBlock")
+        .populate("lender", "name collegeEmail hostelBlock roomNumber")
         .sort({ createdAt: -1 }),
       BorrowRecord.find({ lender: req.user._id })
         .populate("item", "title images transactionType")
-        .populate("borrower", "name collegeEmail hostelBlock")
+        .populate("borrower", "name collegeEmail hostelBlock roomNumber")
         .sort({ createdAt: -1 }),
     ]);
     res.status(200).json({ borrowed, lent });

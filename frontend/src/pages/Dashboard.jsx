@@ -2,10 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
 import { deleteItem, getMyItems } from "../services/itemService";
-import { getMyLeases, returnItem, requestExtension, approveExtension, rejectExtension } from "../services/leaseService";
+import { getMyLeases, returnItem, requestExtension, approveBorrow, rejectBorrow, approveExtension, rejectExtension } from "../services/leaseService";
 
 function Dashboard() {
+  const { user } = useAuth();
   const [myItems, setMyItems] = useState([]);
   const [leases, setLeases] = useState({ borrowed: [], lent: [] });
   const [loading, setLoading] = useState(true);
@@ -76,6 +78,24 @@ function Dashboard() {
     }
   };
 
+  const handleApproveBorrow = async (id) => {
+    try {
+      await approveBorrow(id);
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || "Approve failed");
+    }
+  };
+
+  const handleRejectBorrow = async (id) => {
+    try {
+      await rejectBorrow(id);
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || "Reject failed");
+    }
+  };
+
   const statusBadge = (status) => {
     const styles = {
       Borrowed: "bg-accent-light text-accent",
@@ -89,16 +109,21 @@ function Dashboard() {
     return `text-xs px-2 py-0.5 rounded-full font-medium ${styles[status] || "bg-surface text-muted"}`;
   };
 
-  const totallyEmpty = !loading && myItems.length === 0 && leases.borrowed.length === 0 && leases.lent.length === 0;
+  const monogram = user?.name?.charAt(0)?.toUpperCase() || "?";
 
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="max-w-6xl mx-auto px-8 py-12">
-          <div className="text-center mb-12">
-            <div className="w-48 h-6 bg-stone-100 rounded-md mx-auto animate-pulse" />
-            <div className="w-64 h-4 bg-stone-100 rounded-md mx-auto mt-3 animate-pulse" />
+        <div className="max-w-4xl mx-auto px-8 py-12">
+          <div className="rounded-xl border border-border bg-white p-6 mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-stone-100 animate-pulse" />
+              <div className="space-y-2 flex-1">
+                <div className="w-40 h-5 bg-stone-100 rounded-md animate-pulse" />
+                <div className="w-56 h-4 bg-stone-100 rounded-md animate-pulse" />
+              </div>
+            </div>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="rounded-xl border border-border bg-white p-6 space-y-4">
@@ -116,63 +141,47 @@ function Dashboard() {
     );
   }
 
-  if (totallyEmpty) {
-    return (
-      <>
-        <Navbar />
-        <div className="max-w-6xl mx-auto px-8 py-12">
-          <div className="text-center mb-12">
-            <h1 className="text-2xl font-semibold tracking-tight text-text">Dashboard</h1>
-            <p className="mt-2 text-sm text-secondary">Manage your listings and borrowed items.</p>
-          </div>
-          <div className="text-center py-20 border border-dashed border-border rounded-xl bg-white">
-            <svg className="w-12 h-12 text-muted mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-            </svg>
-            <p className="mt-5 text-sm text-secondary max-w-xs mx-auto">
-              Your dashboard is empty. Start by browsing the marketplace or creating your first listing.
-            </p>
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <Link
-                to="/marketplace"
-                className="text-sm px-5 py-2 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
-              >
-                Browse Marketplace
-              </Link>
-              <Link
-                to="/create"
-                className="text-sm px-5 py-2 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
-              >
-                Create Listing
-              </Link>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
-
   return (
     <>
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-8 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-2xl font-semibold tracking-tight text-text">Dashboard</h1>
-          <p className="mt-2 text-sm text-secondary">Manage your listings and borrowed items.</p>
+      <div className="max-w-4xl mx-auto px-8 py-12">
+        <div className="rounded-xl border border-border bg-white p-6 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center text-accent font-semibold text-lg shrink-0">
+              {monogram}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg font-semibold text-text truncate">{user?.name || "User"}</h1>
+              <p className="text-sm text-secondary truncate">{user?.collegeEmail || ""}</p>
+              <p className="text-xs text-muted mt-0.5">
+                {[user?.hostelBlock, user?.roomNumber].filter(Boolean).join(" · ") || "No hostel details"}
+              </p>
+            </div>
+            <Link
+              to="/edit-profile"
+              className="text-xs px-4 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors shrink-0"
+            >
+              Edit
+            </Link>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-
           <div className="rounded-xl border border-border bg-white p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-semibold text-text">My Listings</h2>
+              <h2 className="text-sm font-semibold text-text">Listed Items</h2>
               <Link to="/create" className="text-xs font-medium text-text hover:opacity-70 transition-opacity">+ New</Link>
             </div>
 
             {myItems.length === 0 ? (
-              <p className="text-sm text-muted">No listings yet.</p>
+              <div className="text-center py-8">
+                <svg className="w-8 h-8 text-muted mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <p className="mt-3 text-sm text-secondary">No items listed yet.</p>
+                <Link to="/create" className="mt-3 inline-block text-xs font-medium text-accent hover:underline">Create your first listing</Link>
+              </div>
             ) : (
               <ul className="space-y-2">
                 {myItems.map((item) => (
@@ -197,7 +206,13 @@ function Dashboard() {
             <h2 className="text-sm font-semibold text-text mb-5">Borrowed Items</h2>
 
             {leases.borrowed.length === 0 ? (
-              <p className="text-sm text-muted">No borrowed items.</p>
+              <div className="text-center py-8">
+                <svg className="w-8 h-8 text-muted mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                <p className="mt-3 text-sm text-secondary">No borrowed items.</p>
+                <Link to="/marketplace" className="mt-3 inline-block text-xs font-medium text-accent hover:underline">Browse marketplace</Link>
+              </div>
             ) : (
               <ul className="space-y-2">
                 {leases.borrowed.map((lease) => (
@@ -266,38 +281,72 @@ function Dashboard() {
           <h2 className="text-sm font-semibold text-text mb-5">Lent Items</h2>
 
           {leases.lent.length === 0 ? (
-            <p className="text-sm text-muted">No items lent out.</p>
+            <div className="text-center py-8">
+              <svg className="w-8 h-8 text-muted mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <p className="mt-3 text-sm text-secondary">No items lent out.</p>
+            </div>
           ) : (
             <ul className="space-y-2">
-              {leases.lent.map((lease) => (
-                <li key={lease._id} className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-text truncate">{lease.item?.title || "Unknown"}</p>
-                    <p className="text-xs text-muted mt-0.5">
-                      {lease.borrower?.name || "Unknown"} &middot; Due {new Date(lease.expectedReturnDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0 ml-4">
-                    <span className={statusBadge(lease.status)}>{lease.status}</span>
-                    {lease.status === "Extension Requested" && (
-                      <div className="flex gap-1.5">
-                        <button
-                          onClick={() => handleApproveExtension(lease._id)}
-                          className="text-xs px-3 py-1.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
-                        >
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => handleRejectExtension(lease._id)}
-                          className="text-xs px-3 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
-                        >
-                          Reject
-                        </button>
+              {leases.lent.map((lease) => {
+                const contactParts = [lease.borrower?.collegeEmail, lease.borrower?.hostelBlock, lease.borrower?.roomNumber].filter(Boolean);
+                return (
+                  <li key={lease._id} className="rounded-lg border border-border px-4 py-3">
+                    <div className="flex items-start justify-between">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-text truncate">{lease.item?.title || "Unknown"}</p>
+                        <p className="text-xs text-muted mt-0.5">
+                          {lease.borrower?.name || "Unknown"} &middot; Due {new Date(lease.expectedReturnDate).toLocaleDateString()}
+                        </p>
+                        {contactParts.length > 0 && (
+                          <p className="text-xs text-text/60 mt-1 truncate">{contactParts.join(" · ")}</p>
+                        )}
+                        {(lease.contactRoom || lease.contactBlock || lease.contactPhone) && (
+                          <p className="text-xs text-accent mt-0.5 truncate">
+                            {[lease.contactRoom, lease.contactBlock, lease.contactPhone].filter(Boolean).join(" · ")}
+                          </p>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </li>
-              ))}
+                      <div className="flex items-center gap-2 shrink-0 ml-4">
+                        <span className={statusBadge(lease.status)}>{lease.status}</span>
+                        {lease.status === "Pending" && (
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => handleApproveBorrow(lease._id)}
+                              className="text-xs px-3 py-1.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleRejectBorrow(lease._id)}
+                              className="text-xs px-3 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                        {lease.status === "Extension Requested" && (
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => handleApproveExtension(lease._id)}
+                              className="text-xs px-3 py-1.5 rounded-full bg-accent text-white hover:bg-accent-hover transition-colors"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleRejectExtension(lease._id)}
+                              className="text-xs px-3 py-1.5 rounded-full border border-border text-secondary hover:bg-surface hover:text-text transition-colors"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

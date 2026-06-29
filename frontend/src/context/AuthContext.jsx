@@ -3,53 +3,37 @@ import api from "../services/api";
 
 const AuthContext = createContext(null);
 
-const makeToken = () => "demo." + btoa(JSON.stringify({ id: Date.now() })) + ".sig";
+const genObjectId = () =>
+  Array.from({ length: 24 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
 
 const isNetworkError = (err) => !err.response;
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("user");
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-
-    if (token && savedUser) {
-      api.get("/auth/me").then(({ data }) => {
-        setUser(data);
-        localStorage.setItem("user", JSON.stringify(data));
-      }).catch(() => {
-        // keep saved user when backend is unreachable
-      }).finally(() => setLoading(false));
-    } else {
-      if (token && !savedUser) localStorage.removeItem("token");
-      setLoading(false);
-    }
+    api.get("/auth/me")
+      .then(({ data }) => setUser(data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
 
   const login = useCallback(async (collegeEmail, password) => {
     try {
       const { data } = await api.post("/auth/login", { collegeEmail, password });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
       setUser(data);
       return data;
     } catch (err) {
       if (isNetworkError(err)) {
+        const id = genObjectId();
         const data = {
-          _id: Date.now().toString(),
+          _id: id,
           name: collegeEmail.split("@")[0] || "User",
           collegeEmail: collegeEmail.toLowerCase(),
           hostelBlock: "A Block",
           verified: true,
-          token: makeToken(),
         };
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data));
         setUser(data);
         return data;
       }
@@ -60,22 +44,18 @@ export const AuthProvider = ({ children }) => {
   const register = useCallback(async ({ name, collegeEmail, password, hostelBlock }) => {
     try {
       const { data } = await api.post("/auth/register", { name, collegeEmail, password, hostelBlock });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
       setUser(data);
       return data;
     } catch (err) {
       if (isNetworkError(err)) {
+        const id = genObjectId();
         const data = {
-          _id: Date.now().toString(),
+          _id: id,
           name,
           collegeEmail: collegeEmail.toLowerCase(),
           hostelBlock: hostelBlock || "A Block",
           verified: true,
-          token: makeToken(),
         };
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data));
         setUser(data);
         return data;
       }
@@ -83,18 +63,17 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const logout = useCallback(async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch {
+      // fallback: clear client state even if server unreachable
+    }
     setUser(null);
   }, []);
 
   const updateUser = useCallback((updates) => {
-    setUser((prev) => {
-      const updated = { ...prev, ...updates };
-      localStorage.setItem("user", JSON.stringify(updated));
-      return updated;
-    });
+    setUser((prev) => ({ ...prev, ...updates }));
   }, []);
 
   const updateProfile = useCallback(async (profileData) => {

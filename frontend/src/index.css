@@ -8,11 +8,13 @@
   --color-accent: #0d9488;
   --color-accent-hover: #0f766e;
   --color-accent-light: #f0fdfa;
+  --color-accent-dark: #115e59;
   --color-text: #1c1917;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-surface);
+  background: linear-gradient(180deg, #ffffff 0%, #f6faf9 100%);
+  min-height: 100vh;
 }

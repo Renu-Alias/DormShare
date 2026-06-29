@@ -2,12 +2,32 @@ import api from "./api";
 
 const isNetworkError = (err) => !err.response && err.message !== "canceled";
 
-export const borrowItem = async (itemId, expectedReturnDate) => {
+export const borrowItem = async (itemId, expectedReturnDate, contactRoom, contactBlock, contactPhone) => {
   try {
-    const { data } = await api.post("/leases/borrow", { itemId, expectedReturnDate });
+    const { data } = await api.post("/leases/borrow", { itemId, expectedReturnDate, contactRoom, contactBlock, contactPhone });
     return data;
   } catch (err) {
     if (isNetworkError(err)) return { _id: Date.now().toString(), message: "Borrowed (offline demo)" };
+    throw err;
+  }
+};
+
+export const approveBorrow = async (id) => {
+  try {
+    const { data } = await api.put(`/leases/${id}/approve`);
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return { message: "Borrow approved (demo)" };
+    throw err;
+  }
+};
+
+export const rejectBorrow = async (id) => {
+  try {
+    const { data } = await api.put(`/leases/${id}/reject`);
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return { message: "Borrow rejected (demo)" };
     throw err;
   }
 };

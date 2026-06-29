@@ -9,6 +9,15 @@ export const validateRegister = (req, res, next) => {
         return res.status(400).json({ message: "Valid college email is required" });
     }
 
+    const allowedDomains = process.env.ALLOWED_EMAIL_DOMAINS;
+    if (allowedDomains) {
+        const domains = allowedDomains.split(",").map((d) => d.trim().toLowerCase());
+        const matches = domains.some((d) => collegeEmail.toLowerCase().endsWith(d));
+        if (!matches) {
+            return res.status(400).json({ message: `Email must be from an allowed domain (${domains.join(", ")})` });
+        }
+    }
+
     if (!password || password.length < 6) {
         return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
@@ -76,15 +85,19 @@ export const validateItem = (req, res, next) => {
         req.body.price = 0;
     }
 
-    if (!hostelBlock || !["A Block", "B Block", "C Block", "D Block"].includes(hostelBlock)) {
+    if (hostelBlock && !["A Block", "B Block", "C Block", "D Block"].includes(hostelBlock)) {
         return res.status(400).json({ message: "Valid hostel block is required" });
+    }
+
+    if (!hostelBlock) {
+        req.body.hostelBlock = req.user.hostelBlock;
     }
 
     next();
 };
 
 export const validateLease = (req, res, next) => {
-    const { expectedReturnDate } = req.body;
+    const { expectedReturnDate, contactRoom, contactBlock, contactPhone } = req.body;
 
     if (!expectedReturnDate || isNaN(Date.parse(expectedReturnDate))) {
         return res.status(400).json({ message: "Valid expected return date is required" });
@@ -93,6 +106,18 @@ export const validateLease = (req, res, next) => {
     const returnDate = new Date(expectedReturnDate);
     if (returnDate <= new Date()) {
         return res.status(400).json({ message: "Return date must be in the future" });
+    }
+
+    if (!contactRoom || typeof contactRoom !== "string" || contactRoom.trim().length < 1) {
+        return res.status(400).json({ message: "Room number is required" });
+    }
+
+    if (!contactBlock || typeof contactBlock !== "string" || contactBlock.trim().length < 1) {
+        return res.status(400).json({ message: "Hostel block is required" });
+    }
+
+    if (!contactPhone || typeof contactPhone !== "string" || contactPhone.trim().length < 5) {
+        return res.status(400).json({ message: "Valid phone number is required" });
     }
 
     next();

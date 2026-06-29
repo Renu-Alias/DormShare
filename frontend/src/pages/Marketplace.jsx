@@ -10,8 +10,19 @@ function Marketplace() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
-  const [category, setCategory] = useState(searchParams.get("category") || "");
-  const [hostelBlock, setHostelBlock] = useState("");
+  const category = searchParams.get("category") || "";
+  const hostelBlock = searchParams.get("hostelBlock") || "";
+
+  const navigateWithParams = useCallback((overrides = {}) => {
+    const params = new URLSearchParams();
+    const s = overrides.search !== undefined ? overrides.search : search;
+    const c = overrides.category !== undefined ? overrides.category : category;
+    const h = overrides.hostelBlock !== undefined ? overrides.hostelBlock : hostelBlock;
+    if (s) params.set("search", s);
+    if (c) params.set("category", c);
+    if (h) params.set("hostelBlock", h);
+    navigate(`/marketplace?${params.toString()}`, { replace: true });
+  }, [search, category, hostelBlock, navigate]);
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
@@ -19,8 +30,10 @@ function Marketplace() {
       const params = {};
       const s = searchParams.get("search");
       const c = searchParams.get("category");
+      const h = searchParams.get("hostelBlock");
       if (s) params.search = s;
       if (c) params.category = c;
+      if (h) params.hostelBlock = h;
       const { items: data } = await getItems(params);
       setItems(data);
     } catch (err) {
@@ -36,11 +49,7 @@ function Marketplace() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (category) params.set("category", category);
-    if (hostelBlock) params.set("hostelBlock", hostelBlock);
-    navigate(`/marketplace?${params.toString()}`);
+    navigateWithParams({ search });
   };
 
   return (
@@ -66,7 +75,7 @@ function Marketplace() {
 
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => navigateWithParams({ category: e.target.value, search })}
             className="border border-border rounded-lg px-4 py-2 text-sm text-text bg-white outline-none focus:border-text transition-colors"
           >
             <option value="">All Categories</option>
@@ -84,7 +93,7 @@ function Marketplace() {
 
           <select
             value={hostelBlock}
-            onChange={(e) => setHostelBlock(e.target.value)}
+            onChange={(e) => navigateWithParams({ hostelBlock: e.target.value, search })}
             className="border border-border rounded-lg px-4 py-2 text-sm text-text bg-white outline-none focus:border-text transition-colors"
           >
             <option value="">All Blocks</option>
@@ -115,7 +124,7 @@ function Marketplace() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {items.map((item) => (
-                <ItemCard key={item._id} item={item} />
+                <ItemCard key={item._id} item={item} onBorrow={(id) => setItems(items.filter((i) => i._id !== id))} />
               ))}
             </div>
           )}

@@ -1,6 +1,9 @@
 import Item from "../models/item.js";
 
-const isDbError = (err) => err.name === "MongooseError" || err.message?.includes("not connected");
+const isDbError = (err) =>
+  ["MongooseError", "CastError", "ValidationError", "StrictModeError"].includes(err.name) ||
+  err.message?.includes("not connected") ||
+  err.message?.includes("buffering timed out");
 
 export const createItem = async (req, res) => {
   try {

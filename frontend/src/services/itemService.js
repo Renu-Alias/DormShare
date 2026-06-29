@@ -102,9 +102,7 @@ export const getItemById = async (id) => {
 
 export const createItem = async (formData) => {
   try {
-    const { data } = await api.post("/items", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const { data } = await api.post("/items", formData);
     return data;
   } catch (err) {
     if (isNetworkError(err)) return { _id: Date.now().toString(), message: "Created (offline demo)" };

@@ -4,9 +4,12 @@ import { useAuth } from "./context/AuthContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Marketplace from "./pages/Marketplace";
 import Dashboard from "./pages/Dashboard";
 import CreateListing from "./pages/CreateListing";
+import EditProfile from "./pages/EditProfile";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -29,6 +32,8 @@ function App() {
         path="/register"
         element={user ? <Navigate to="/dashboard" replace /> : <Register />}
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route
         path="/marketplace"
         element={
@@ -50,6 +55,14 @@ function App() {
         element={
           <ProtectedRoute>
             <CreateListing />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/edit-profile"
+        element={
+          <ProtectedRoute>
+            <EditProfile />
           </ProtectedRoute>
         }
       />

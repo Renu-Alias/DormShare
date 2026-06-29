@@ -2,16 +2,17 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { createItem } from "../services/itemService";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function CreateListing() {
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Books");
   const [condition, setCondition] = useState("Like New");
   const [transactionType, setTransactionType] = useState("Free to Borrow");
   const [price, setPrice] = useState(0);
-  const [hostelBlock, setHostelBlock] = useState("A Block");
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ function CreateListing() {
       formData.append("condition", condition);
       formData.append("transactionType", transactionType);
       formData.append("price", price);
-      formData.append("hostelBlock", hostelBlock);
+      formData.append("hostelBlock", user?.hostelBlock || "A Block");
       images.forEach((file) => formData.append("images", file));
 
       await createItem(formData);
@@ -131,19 +132,8 @@ function CreateListing() {
               </select>
             </div>
 
-            <div>
-              <label htmlFor="block" className="block text-sm font-medium text-text mb-1.5">Hostel Block</label>
-              <select
-                id="block"
-                value={hostelBlock}
-                onChange={(e) => setHostelBlock(e.target.value)}
-                className="w-full border border-border rounded-lg px-4 py-2.5 text-sm text-text bg-white outline-none focus:border-text transition-colors"
-              >
-                <option>A Block</option>
-                <option>B Block</option>
-                <option>C Block</option>
-                <option>D Block</option>
-              </select>
+            <div className="col-span-2">
+              <p className="text-xs text-muted">Listed in <span className="font-medium text-text">{user?.hostelBlock || "A Block"}</span> (from your profile)</p>
             </div>
           </div>
 

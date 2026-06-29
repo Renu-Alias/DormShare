@@ -1,12 +1,18 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import itemRoutes from "./routes/itemRouts.js";
 import leaseRoutes from "./routes/leaseRoutes.js";
 import rateLimit from "express-rate-limit";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -21,8 +27,13 @@ const limiter = rateLimit({
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(limiter);
 
 app.get("/", (req, res) => {

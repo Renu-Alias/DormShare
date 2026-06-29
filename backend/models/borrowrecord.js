@@ -30,6 +30,21 @@ const borrowRecordSchema = new mongoose.Schema(
         required:true
     },
 
+    contactRoom:{
+        type:String,
+        default:""
+    },
+
+    contactBlock:{
+        type:String,
+        default:""
+    },
+
+    contactPhone:{
+        type:String,
+        default:""
+    },
+
     actualReturnDate:{
         type:Date
     },

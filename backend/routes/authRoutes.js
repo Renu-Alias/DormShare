@@ -1,7 +1,8 @@
 import express from "express";
 import {
-    register,
-    login,
+    registerUser,
+    loginUser,
+    logoutUser,
     getMe,
     updateProfile,
     updatePassword,
@@ -13,8 +14,9 @@ import { validateRegister, validateLogin } from "../middleware/validation.js";
 
 const router = express.Router();
 
-router.post("/register", validateRegister, register);
-router.post("/login", validateLogin, login);
+router.post("/register", validateRegister, registerUser);
+router.post("/login", validateLogin, loginUser);
+router.post("/logout", protect, logoutUser);
 router.get("/me", protect, getMe);
 router.put("/updateprofile", protect, updateProfile);
 router.put("/updatepassword", protect, updatePassword);

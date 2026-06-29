@@ -1,4 +1,6 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import {
     createItem,
     getItems,
@@ -12,11 +14,16 @@ import { protect } from "../middleware/auth.js";
 import { validateItem } from "../middleware/validation.js";
 import multer from "multer";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
+
+const uploadsDir = path.resolve(__dirname, "..", "uploads");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "uploads/");
+        cb(null, uploadsDir);
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);

@@ -78,15 +78,15 @@ function Dashboard() {
 
   const statusBadge = (status) => {
     const styles = {
-      Borrowed: "bg-stone-100 text-stone-700",
-      Returned: "bg-stone-100 text-stone-700",
-      Pending: "bg-stone-100 text-stone-700",
+      Borrowed: "bg-accent-light text-accent",
+      Returned: "bg-accent-light text-accent",
+      Pending: "bg-accent-light text-accent",
       Overdue: "bg-red-50 text-red-700",
-      "Extension Requested": "bg-stone-100 text-stone-700",
-      Approved: "bg-stone-100 text-stone-700",
-      Cancelled: "bg-stone-100 text-stone-400",
+      "Extension Requested": "bg-accent-light text-accent",
+      Approved: "bg-accent-light text-accent",
+      Cancelled: "bg-surface text-muted",
     };
-    return `text-xs px-2 py-0.5 rounded-full font-medium ${styles[status] || "bg-stone-100 text-stone-500"}`;
+    return `text-xs px-2 py-0.5 rounded-full font-medium ${styles[status] || "bg-surface text-muted"}`;
   };
 
   if (loading) {

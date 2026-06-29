@@ -1,3 +1,5 @@
+import api from "./api";
+
 const mockItems = [
   {
     _id: "1", title: "Calculus Textbook", category: "Books", description: "Like new condition",
@@ -25,7 +27,7 @@ const mockItems = [
   },
 ];
 
-export const getItems = async (params = {}) => {
+const filterMock = (params) => {
   let filtered = [...mockItems];
   if (params.search) {
     const q = params.search.toLowerCase();
@@ -36,26 +38,76 @@ export const getItems = async (params = {}) => {
   return { items: filtered, totalPages: 1, currentPage: 1, total: filtered.length };
 };
 
+const isNetworkError = (err) => !err.response && err.message !== "canceled";
+
+export const getItems = async (params = {}) => {
+  try {
+    const { data } = await api.get("/items", { params });
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return filterMock(params);
+    throw err;
+  }
+};
+
 export const getMyItems = async () => {
-  return mockItems;
+  try {
+    const { data } = await api.get("/items/myitems");
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return [];
+    throw err;
+  }
 };
 
 export const getItemById = async (id) => {
-  return mockItems.find((i) => i._id === id) || null;
+  try {
+    const { data } = await api.get(`/items/${id}`);
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return mockItems.find((i) => i._id === id) || null;
+    throw err;
+  }
 };
 
 export const createItem = async (formData) => {
-  return { _id: Date.now().toString(), ...Object.fromEntries(formData), images: [], owner: { name: "You" } };
+  try {
+    const { data } = await api.post("/items", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return { _id: Date.now().toString(), message: "Created (offline demo)" };
+    throw err;
+  }
 };
 
 export const updateItem = async (id, formData) => {
-  return { _id: id, ...Object.fromEntries(formData), message: "Updated (demo)" };
+  try {
+    const { data } = await api.put(`/items/${id}`, formData);
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return { _id: id, message: "Updated (offline demo)" };
+    throw err;
+  }
 };
 
 export const deleteItem = async (id) => {
-  return { message: "Item removed (demo)" };
+  try {
+    const { data } = await api.delete(`/items/${id}`);
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return { message: "Deleted (offline demo)" };
+    throw err;
+  }
 };
 
 export const toggleAvailability = async (id) => {
-  return { _id: id, message: "Availability toggled (demo)" };
+  try {
+    const { data } = await api.patch(`/items/${id}/availability`);
+    return data;
+  } catch (err) {
+    if (isNetworkError(err)) return { message: "Toggled (offline demo)" };
+    throw err;
+  }
 };

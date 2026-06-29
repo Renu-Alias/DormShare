@@ -11,7 +11,7 @@ const icons = {
 function CategoryCard({ title }) {
   return (
     <Link to={`/marketplace?category=${title}`}>
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-white px-6 py-8 hover:shadow-sm hover:border-text/20 transition-all duration-200">
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-white px-6 py-8 hover:shadow-sm hover:border-accent/20 hover:bg-accent-light/50 transition-all duration-200">
         <svg className="w-7 h-7 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
           <path strokeLinecap="round" strokeLinejoin="round" d={icons[title]} />
         </svg>

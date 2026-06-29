@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import itemRoutes from "./routes/itemRouts.js";
 import leaseRoutes from "./routes/leaseRoutes.js";
@@ -10,6 +11,8 @@ import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 
 dotenv.config();
+
+connectDB();
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,

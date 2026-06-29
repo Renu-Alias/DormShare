@@ -144,7 +144,7 @@ function CreateListing() {
 
           {transactionType === "Available for Lease" && (
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-text mb-1.5">Price (&there4;)</label>
+              <label htmlFor="price" className="block text-sm font-medium text-text mb-1.5">Price (₹)</label>
               <input
                 id="price"
                 type="number"

@@ -2,7 +2,7 @@ function ItemCard({ item }) {
   const apiUrl = import.meta.env.VITE_API_URL?.replace("/api", "") || "";
 
   return (
-    <div className="group rounded-xl border border-border bg-white overflow-hidden hover:shadow-sm hover:border-text/20 transition-all duration-200">
+    <div className="rounded-xl border border-border bg-white overflow-hidden hover:shadow-sm hover:border-accent/20 transition-all duration-200">
       {item.images && item.images.length > 0 ? (
         <img
           src={`${apiUrl}${item.images[0]}`}
@@ -21,7 +21,7 @@ function ItemCard({ item }) {
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-sm font-medium text-text leading-snug">{item.title}</h3>
           {item.transactionType === "Available for Lease" && (
-            <span className="text-sm font-semibold text-text whitespace-nowrap">&there4;{item.price || 0}</span>
+            <span className="text-sm font-semibold text-accent whitespace-nowrap">₹{item.price || 0}</span>
           )}
         </div>
 

@@ -1,134 +1,160 @@
-# DormShare 📦🎓
+# DormShare
 
-DormShare is a hyper-local, peer-to-peer micro-leasing marketplace built on the MERN stack, designed exclusively for college campuses. 
+Campus micro-leasing platform — students borrow, rent, and lend campus essentials.
 
-At the end of every semester, students throw away or give away perfectly good essentials (textbooks, kettles, table lamps, mattresses) simply because they can't logistically haul them back home. DormShare solves this waste cycle by enabling students to seamlessly list, borrow, lease, or rent campus essentials within a trusted, closed student community.
+## Features
 
----
+- **Borrow** — request items from peers for a set period; lenders approve or reject requests
+- **Rent** — lease items at a fixed price with a return date
+- **Lend** — list your own items for others to borrow or rent
+- **Marketplace** — browse, search, and filter available items by category and hostel block
+- **Dashboard** — manage your listings, track borrowed items, and handle incoming requests
+- **Authentication** — register with a college email, log in, edit profile, reset password
 
-## ✨ The USP (Unique Selling Proposition)
-* **Campus-Domain Verification:** Eliminates external spam and trust issues by strictly validating registration via official college email domains (e.g., `@mits.ac.in`).
-* **Automated Return Reminders:** Features an integrated backend scheduling engine (`node-cron`) that monitors lease durations and dispatches automated email alerts via `Nodemailer` to borrowers when the semester ends and items are due.
+## Tech Stack
 
----
+| Layer       | Technology                                      |
+|-------------|-------------------------------------------------|
+| Frontend    | React 19, React Router 7, Tailwind CSS v4, Vite 8 |
+| Backend     | Express 5, Mongoose, JWT, bcryptjs              |
+| Database    | MongoDB (Atlas or local)                        |
+| Auth        | HTTP‑Only cookies, bcrypt password hashing      |
 
-## 🚀 Key Features
-* **Hyper-Local Campus Listings:** Complete CRUD functionality for adding items with status flags, description, and specific item conditions.
-* **Dual-Role User Dashboard:** A clean user profile splitting active items into transparent "Items Lent" and "Items Borrowed" categories for easy accountability.
-* **Localized Filtering:** Quick-search system filtering marketplace items by specific campus buildings or hostel blocks.
-* **Secure Session Handling:** Protected routes via JSON Web Tokens (JWT) ensuring user actions are securely tied to verified profiles.
+## Project Structure
 
----
-
-## 🛠️ Tech Stack
-
-- **Frontend:** React.js, Tailwind CSS, Axios
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB (Mongoose)
-- **Utilities:** `node-cron` (Task Scheduling), `Nodemailer` (Email Service), `jsonwebtoken` (Authentication)
-
----
-
-## 📁 Project Structure
-
-```text
+```
 DormShare/
 ├── backend/
 │   ├── config/
-│   │   ├── db.js           # MongoDB connection
-│   │   └── smtp.js         # Nodemailer transporter
+│   │   ├── db.js              # MongoDB connection with retry logic
+│   │   └── smtp.js            # SMTP configuration
 │   ├── controllers/
-│   │   ├── authController.js    # Register, login, profile, password reset
-│   │   ├── itemController.js    # Listing CRUD, search, filter, toggle
-│   │   └── leaseController.js   # Borrow, return, extension, countdown, overdue
+│   │   ├── authController.js   # Register, login, logout, profile, password reset
+│   │   ├── itemController.js   # CRUD for marketplace items
+│   │   └── leaseController.js  # Borrow requests, approve, reject, return
 │   ├── middleware/
-│   │   ├── auth.js              # JWT protect middleware
-│   │   └── validation.js        # Input sanitizers for auth, items, leases
+│   │   ├── auth.js             # JWT cookie verification
+│   │   └── validation.js       # Request validation rules
 │   ├── models/
-│   │   ├── user.js              # User schema (college email, hostel, etc.)
-│   │   ├── item.js              # Item listing schema
-│   │   └── borrowrecord.js      # Lease/borrow record schema
+│   │   ├── user.js             # User schema (name, email, block, room, etc.)
+│   │   ├── item.js             # Item schema (title, category, images, etc.)
+│   │   └── borrowrecord.js     # Borrow record schema
 │   ├── routes/
-│   │   ├── authRoutes.js        # /api/auth/*
-│   │   ├── itemRouts.js         # /api/items/*
-│   │   └── leaseRoutes.js       # /api/leases/*
-│   ├── uploads/                 # Local image storage (gitignored)
-│   ├── server.js                # Entry point, routes, cron, error handlers
+│   │   ├── authRoutes.js       # /api/auth/*
+│   │   ├── itemRouts.js        # /api/items/*
+│   │   └── leaseRoutes.js      # /api/leases/*
+│   ├── utils/
+│   │   └── email.js            # Email helpers
+│   ├── server.js               # App entry point
+│   ├── .env.example            # Environment template
 │   └── package.json
-├── .env.example
-├── .gitignore
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── BorrowModal.jsx     # Modal for submitting a borrow request
+│   │   │   ├── CategoryCard.jsx    # Category grid icon card
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Hero.jsx            # Landing page hero section
+│   │   │   ├── ItemCard.jsx        # Marketplace item card
+│   │   │   └── Navbar.jsx
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx      # Auth state + cookie-based session
+│   │   ├── pages/
+│   │   │   ├── Home.jsx            # Landing page
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── ForgotPassword.jsx
+│   │   │   ├── ResetPassword.jsx
+│   │   │   ├── Marketplace.jsx     # Item browsing with filters
+│   │   │   ├── Dashboard.jsx       # User dashboard with requests
+│   │   │   ├── CreateListing.jsx   # Post a new item
+│   │   │   └── EditProfile.jsx
+│   │   ├── services/
+│   │   │   ├── api.js              # Axios instance (withCredentials)
+│   │   │   ├── itemService.js      # Item API calls + mock fallback
+│   │   │   └── leaseService.js     # Borrow/lease API calls + mock fallback
+│   │   ├── App.jsx                 # Route definitions
+│   │   ├── index.css               # Tailwind theme + global styles
+│   │   └── main.jsx                # Entry point
+│   ├── vite.config.js
+│   └── package.json
+│
+├── logo.png
 └── README.md
 ```
 
----
-
-## 🚀 Getting Started
+## Setup Instructions
 
 ### Prerequisites
-- Node.js >= 16
-- MongoDB (local or Atlas)
-- Gmail account (for SMTP) or any email provider
 
-### 1. Clone the repo
-```bash
-git clone https://github.com/<your-org>/DormShare.git
-cd DormShare
-```
+- Node.js 18+
+- MongoDB (Atlas or local instance)
+- npm
 
-### 2. Install backend dependencies
+### Backend
+
 ```bash
 cd backend
-npm install
-```
-
-### 3. Configure environment variables
-Copy the example env file and fill in your values:
-```bash
 cp .env.example .env
-```
-
-Edit `.env` with your actual values:
-| Variable | Description |
-|----------|-------------|
-| `PORT` | Backend port (default: `5000`) |
-| `NODE_ENV` | `development` or `production` |
-| `MONGO_URI` | MongoDB connection string (Atlas or local) |
-| `JWT_SECRET` | Long random string for signing JWTs |
-| `JWT_EXPIRE` | Token expiry (e.g. `7d`) |
-| `ALLOWED_EMAIL_DOMAINS` | Comma-separated college domains (e.g. `@mits.ac.in`) |
-| `FROM_EMAIL` | Sender email for transactional emails |
-| `SMTP_HOST` | SMTP host (e.g. `smtp.gmail.com`) |
-| `SMTP_PORT` | SMTP port (e.g. `587`) |
-| `SMTP_USER` | SMTP username (usually same as `FROM_EMAIL`) |
-| `SMTP_PASS` | SMTP password (for Gmail: use an **App Password**) |
-
-> **Note:** `.env` is `.gitignore`’d — never commit real secrets.
-
-### 4. Create uploads folder
-The backend stores uploaded images in `backend/uploads/`. Create it manually if it doesn't exist:
-```bash
-mkdir backend/uploads
-```
-
-### 5. Run the backend
-```bash
-# Development (with nodemon)
-npm run dev
-
-# Production
-npm start
-```
-
-The API will be available at `http://localhost:5000`.
-
-### 6. Run the frontend
-```bash
-cd ../frontend
+# Edit .env — set MONGO_URI, JWT_SECRET, and other variables
 npm install
-npm start
+node server.js
 ```
 
-The app will open at `http://localhost:3000`.
+The server starts on `http://localhost:5000`.
 
----
+#### Environment Variables (`.env`)
 
+| Variable             | Description                            |
+|----------------------|----------------------------------------|
+| `MONGO_URI`          | MongoDB connection string (SRV)        |
+| `MONGO_URI_NON_SRV`  | Fallback non-SRV connection string     |
+| `MONGO_URI_FALLBACK` | Local MongoDB fallback                 |
+| `JWT_SECRET`         | Secret for signing JWTs                |
+| `CORS_ORIGIN`        | Frontend URL (default `http://localhost:5173`) |
+| `ALLOWED_EMAIL_DOMAINS` | Comma-separated email domains for registration |
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The dev server starts on `http://localhost:5173`. API calls to `/api/*` and `/uploads/*` are proxied to `http://localhost:5000`.
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+### Running Both
+
+Start the backend first, then the frontend. When both are running, the frontend communicates with the real backend and MongoDB. If the backend is unreachable, the frontend falls back to mock data for offline development.
+
+## API Overview
+
+| Method | Endpoint                      | Auth     | Description               |
+|--------|-------------------------------|----------|---------------------------|
+| POST   | `/api/auth/register`          | No       | Register a new user       |
+| POST   | `/api/auth/login`             | No       | Log in                    |
+| POST   | `/api/auth/logout`            | Yes      | Clear auth cookie         |
+| GET    | `/api/auth/me`                | Yes      | Get current user profile  |
+| PUT    | `/api/auth/updateprofile`     | Yes      | Update name, block, room  |
+| PUT    | `/api/auth/updatepassword`    | Yes      | Change password           |
+| POST   | `/api/auth/forgotpassword`    | No       | Request password reset    |
+| PUT    | `/api/auth/resetpassword/:token` | No    | Reset password with token |
+| GET    | `/api/items`                  | No       | List available items      |
+| GET    | `/api/items/myitems`          | Yes      | List current user's items |
+| GET    | `/api/items/:id`              | No       | Get item by ID            |
+| POST   | `/api/items`                  | Yes      | Create a new item         |
+| PUT    | `/api/items/:id`              | Yes      | Update an item            |
+| DELETE | `/api/items/:id`              | Yes      | Delete an item            |
+| PATCH  | `/api/items/:id/availability` | Yes      | Toggle item availability  |
+| POST   | `/api/leases/borrow`          | Yes      | Submit a borrow request   |
+| PUT    | `/api/leases/:id/approve`     | Yes      | Approve a borrow request  |
+| PUT    | `/api/leases/:id/reject`      | Yes      | Reject a borrow request   |
+| PUT    | `/api/leases/:id/return`      | Yes      | Mark item as returned     |

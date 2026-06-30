@@ -1,5 +1,5 @@
 # DormShare
-> A hyper-local, peer-to-peer micro-leasing marketplace, designed exclusively for college campuses where students borrow, rent and lend campus essentials.
+> A hyper-local, peer-to-peer micro-leasing marketplace, designed exclusively for college campuses where students borrow, rent and lease campus essentials.
 
 <p align="center">
   <img src="logo.png" alt="DormShare" width="300">

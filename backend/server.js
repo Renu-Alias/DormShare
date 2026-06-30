@@ -16,7 +16,56 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
-connectDB();
+const startServer = (app) => {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+};
+
+const waitForDbAndStart = async () => {
+    const maxRetries = parseInt(process.env.DB_MAX_RETRIES || '5', 10);
+    const baseDelay = parseInt(process.env.DB_RETRY_BASE_MS || '2000', 10);
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            const ok = await connectDB();
+            if (ok) {
+                startServer(app);
+                return;
+            }
+        } catch (err) {
+            console.error('Unexpected error while connecting to DB:', err.message || err);
+        }
+
+        if (attempt < maxRetries) {
+            const delay = baseDelay * Math.pow(2, attempt);
+            console.log(`DB connect attempt ${attempt + 1} failed — retrying in ${delay}ms`);
+            await new Promise(r => setTimeout(r, delay));
+        } else {
+            console.error(`DB connect failed after ${maxRetries + 1} attempts.`);
+        }
+    }
+
+    if (process.env.DB_FAIL_FAST === 'true') {
+        console.error('DB_FAIL_FAST is true — exiting process.');
+        process.exit(1);
+    }
+
+    // Start server without DB, but keep attempting background reconnects
+    console.warn('Starting server without DB connection; background reconnects will continue.');
+    startServer(app);
+
+    const bgIntervalMs = parseInt(process.env.DB_RECONNECT_INTERVAL_MS || '60000', 10);
+    setInterval(async () => {
+        try {
+            const ok = await connectDB();
+            if (ok) console.log('Background DB reconnect succeeded.');
+        } catch (e) {
+            console.debug('Background DB reconnect failed.');
+        }
+    }, bgIntervalMs);
+};
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -62,8 +111,5 @@ const errorHandler = (err, req, res, next) => {
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Start the app after attempting DB connection (with retries and background reconnect)
+waitForDbAndStart();
